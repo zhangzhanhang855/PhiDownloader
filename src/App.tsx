@@ -480,23 +480,23 @@ const App: React.FC = () => {
 
     const handleFileDownloaded = useCallback((fileName: string) => showToast(`Saved ${fileName}`), [showToast]);
 
-    const bulkInputClass = 'w-full h-10 rounded-[10px] bg-white/[.04] border border-white/[.08] px-3 font-mono text-sm text-slate-200 placeholder:text-slate-600 focus:outline-none focus:border-[rgba(34,211,238,.45)] disabled:opacity-50';
+    const bulkInputClass = 'w-full h-10 rounded-[10px] bg-white border border-[#dce3dd] px-3 font-mono text-sm text-[#16201a] placeholder:text-[#8b9a91] focus:outline-none focus:border-[#008c3c] disabled:opacity-50';
 
     const renderBulkPanel = () => (
-        <div className="h-full overflow-y-auto thin-scroll flex items-center justify-center p-5 sm:p-10">
-            <div className="w-full max-w-lg flex flex-col gap-5">
+        <div className="h-full overflow-y-auto thin-scroll flex items-center justify-center p-5 sm:p-10 bg-[#f3f5f3]">
+            <div className="w-full max-w-lg flex flex-col gap-5 p-6 rounded-2xl bg-white border border-[#dce3dd] shadow-sm">
                 <div className="flex flex-col gap-1">
-                    <span className="flex items-center gap-2 font-mono text-[11px] font-medium tracking-[.12em] text-[#fbbf24]">
+                    <span className="flex items-center gap-2 font-mono text-[11px] font-semibold tracking-[.12em] text-[#b45309]">
                         BULK DOWNLOAD MODE
-                        <span className="text-[9px] font-semibold tracking-[.1em] px-1.5 py-0.5 rounded bg-[rgba(251,191,36,.1)]">WIP</span>
+                        <span className="text-[9px] font-semibold tracking-[.1em] px-1.5 py-0.5 rounded bg-[#fef3c7]">WIP</span>
                     </span>
-                    <h2 className="text-[32px] font-bold leading-[1.15] text-white">Export every song</h2>
-                    <p className="text-sm text-slate-400">To return to the normal page, turn off “Bulk download mode” in Settings → Advanced.</p>
+                    <h2 className="text-[32px] font-bold leading-[1.15] text-[#16201a]">Export every song</h2>
+                    <p className="text-sm text-[#4b5c53]">To return to the normal page, turn off “Bulk download mode” in Settings → Advanced.</p>
                 </div>
 
                 <div className="grid sm:grid-cols-2 gap-4">
                     <label className="flex flex-col gap-1.5">
-                        <span className="font-mono text-[10px] font-medium tracking-[.14em] text-slate-500">DELAY (SECONDS)</span>
+                        <span className="font-mono text-[10px] font-semibold tracking-[.14em] text-[#4b5c53]">DELAY (SECONDS)</span>
                         <input
                             type="number"
                             min="0"
@@ -507,10 +507,10 @@ const App: React.FC = () => {
                             className={bulkInputClass}
                             placeholder="0"
                         />
-                        <span className="text-xs text-slate-500">Pause between songs to avoid rate limits. GitHub allows roughly 5000 requests/hour.</span>
+                        <span className="text-xs text-[#73857b]">Pause between songs to avoid rate limits. GitHub allows roughly 5000 requests/hour.</span>
                     </label>
                     <label className="flex flex-col gap-1.5">
-                        <span className="font-mono text-[10px] font-medium tracking-[.14em] text-slate-500">SONGS (MAX {songs.length})</span>
+                        <span className="font-mono text-[10px] font-semibold tracking-[.14em] text-[#4b5c53]">SONGS (MAX {songs.length})</span>
                         <input
                             type="number"
                             min="1"
@@ -521,7 +521,7 @@ const App: React.FC = () => {
                             className={bulkInputClass}
                             placeholder={songs.length.toString()}
                         />
-                        <span className="text-xs text-slate-500">Limit the number of songs to download for testing.</span>
+                        <span className="text-xs text-[#73857b]">Limit the number of songs to download for testing.</span>
                     </label>
                 </div>
 
@@ -530,11 +530,11 @@ const App: React.FC = () => {
                         type="button"
                         onClick={handleBulkExport}
                         disabled={bulkExportState.isExporting || songs.length === 0}
-                        className="relative overflow-hidden flex-1 h-[52px] rounded-[10px] bg-[#22d3ee] hover:bg-[#67e8f9] text-[#06141a] flex items-center justify-center gap-2.5 font-bold text-[15px] tracking-[.04em] transition-colors disabled:cursor-not-allowed disabled:bg-[#22d3ee]/40"
+                        className="relative overflow-hidden flex-1 h-[52px] rounded-[10px] bg-[#008c3c] hover:bg-[#007331] text-white flex items-center justify-center gap-2.5 font-bold text-[15px] tracking-[.04em] transition-colors disabled:cursor-not-allowed disabled:bg-[#008c3c]/40"
                     >
                         {bulkExportState.isExporting ? (
                             <>
-                                <span className="[&_svg]:text-[#06141a]"><Spinner /></span>
+                                <span className="[&_svg]:text-white"><Spinner /></span>
                                 Processing…
                             </>
                         ) : (
@@ -542,7 +542,7 @@ const App: React.FC = () => {
                         )}
                         {bulkExportState.isExporting && bulkExportState.action === 'Zipping' && (
                             <div
-                                className="absolute bottom-0 left-0 h-[3px] bg-[#06141a]/40 transition-[width] duration-150"
+                                className="absolute bottom-0 left-0 h-[3px] bg-white/45 transition-[width] duration-150"
                                 style={{ width: `${bulkExportState.percent.toFixed(0)}%` }}
                             />
                         )}
@@ -553,12 +553,12 @@ const App: React.FC = () => {
                 </div>
 
                 {bulkExportState.isExporting && (
-                    <div className="flex flex-col gap-2 p-4 rounded-xl border border-white/[.07] bg-white/[.02]">
+                    <div className="flex flex-col gap-2 p-4 rounded-xl border border-[#dce3dd] bg-[#f8faf8]">
                         <div className="flex justify-between text-sm">
-                            <span className="text-slate-300">Action: <span className="text-[#22d3ee]">{bulkExportState.action}</span></span>
-                            <span className="font-mono text-xs text-slate-400">{bulkExportState.songsLeft} LEFT</span>
+                            <span className="text-[#4b5c53]">Action: <span className="text-[#008c3c] font-semibold">{bulkExportState.action}</span></span>
+                            <span className="font-mono text-xs text-[#73857b]">{bulkExportState.songsLeft} LEFT</span>
                         </div>
-                        <div className="font-mono text-[11px] text-slate-500 truncate" title={bulkExportState.currentFile}>
+                        <div className="font-mono text-[11px] text-[#73857b] truncate" title={bulkExportState.currentFile}>
                             {bulkExportState.currentFile}
                         </div>
                     </div>
@@ -568,7 +568,7 @@ const App: React.FC = () => {
     );
 
     return (
-        <div className="relative h-dvh flex flex-col antialiased font-saira text-slate-200 bg-[#090b10] overflow-hidden">
+        <div className="relative h-dvh flex flex-col antialiased font-saira text-[#16201a] bg-[#f3f5f3] overflow-hidden">
             {isSettingsOpen && <SettingsPopup isOpen={isSettingsOpen} onClose={() => setIsSettingsOpen(false)} initialCategory={settingsCategory} />}
             {isFaqOpen && <FAQPopup isOpen={isFaqOpen} onClose={() => setIsFaqOpen(false)} />}
             {isAboutOpen && <AboutPopup isOpen={isAboutOpen} onClose={() => setIsAboutOpen(false)} />}
@@ -642,7 +642,7 @@ const App: React.FC = () => {
                 />
 
                 <main className="flex-1 min-h-0 grid grid-rows-[minmax(0,40%)_minmax(0,1fr)] md:grid-rows-1 md:grid-cols-[340px_minmax(0,1fr)]">
-                    <aside className="min-h-0 border-b md:border-b-0 md:border-r border-white/[.06]">
+                    <aside className="min-h-0 border-b md:border-b-0 md:border-r border-[#dce3dd]">
                         <SongSelector
                             isLoading={isLoadingSongs}
                             error={errorSongs}
@@ -677,10 +677,10 @@ const App: React.FC = () => {
                             <div
                                 key={toast.id}
                                 role="status"
-                                className="motion-toast absolute left-1/2 bottom-5 z-30 flex items-center gap-2.5 max-w-[calc(100%-32px)] pl-3 pr-4 py-2.5 rounded-[10px] bg-[rgba(12,15,22,.95)] border border-[rgba(34,211,238,.3)] shadow-[0_20px_50px_rgba(0,0,0,.5)] text-[13px] text-slate-200"
+                                className="motion-toast absolute left-1/2 bottom-5 z-30 flex items-center gap-2.5 max-w-[calc(100%-32px)] pl-3 pr-4 py-2.5 rounded-[10px] bg-white border border-[#008c3c]/35 shadow-[0_12px_32px_rgba(22,32,26,0.14)] text-[13px] text-[#16201a]"
                             >
-                                <span className="w-5 h-5 flex-none rounded-full bg-[#22d3ee] flex items-center justify-center">
-                                    <svg width="12" height="12" fill="none" viewBox="0 0 24 24" strokeWidth={3} stroke="#06141a"><path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" /></svg>
+                                <span className="w-5 h-5 flex-none rounded-full bg-[#008c3c] flex items-center justify-center">
+                                    <svg width="12" height="12" fill="none" viewBox="0 0 24 24" strokeWidth={3} stroke="#ffffff"><path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" /></svg>
                                 </span>
                                 <span className="truncate">{toast.text}</span>
                             </div>
@@ -688,9 +688,10 @@ const App: React.FC = () => {
                     </section>
                 </main>
 
-                <footer className="flex-none min-h-10 flex flex-wrap items-center justify-center text-center gap-x-6 gap-y-0.5 px-4 sm:px-6 py-2 border-t border-white/[.1] bg-[#05070a] text-xs text-slate-500">
-                    <span>Source code can be found on <a href={REPO_URL} target="_blank" rel="noreferrer" className="text-[#22d3ee] hover:text-[#67e8f9]">GitHub</a>, considering starring the repo.</span>
-                    <span className="hidden sm:inline">All assets belong to their respective copyright holders.</span>
+                <footer className="flex-none min-h-10 flex flex-wrap items-center justify-center text-center gap-x-6 gap-y-0.5 px-4 sm:px-6 py-2 border-t border-[#dce3dd] bg-white text-xs text-[#4b5c53]">
+                    <span>Developed by <b className="text-[#16201a]">JackZhang</b></span>
+                    <span>Source code on <a href={REPO_URL} target="_blank" rel="noreferrer" className="text-[#008c3c] font-medium hover:underline">GitHub</a></span>
+                    <span className="hidden sm:inline text-[#73857b]">All assets belong to their respective copyright holders.</span>
                 </footer>
             </div>
             )}

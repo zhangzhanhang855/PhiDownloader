@@ -26,7 +26,7 @@ export const DifficultySelector: React.FC<DifficultySelectorProps> = ({ difficul
 
     return (
         <div className="flex flex-col gap-2.5">
-            <span className="font-mono text-[10px] font-medium tracking-[.14em] text-slate-500">AVAILABLE DIFFICULTIES</span>
+            <span className="font-mono text-[10px] font-semibold tracking-[.14em] text-[#4b5c53]">AVAILABLE DIFFICULTIES</span>
             <div className={`grid grid-cols-2 ${slots.length > 4 ? 'sm:grid-cols-5' : 'sm:grid-cols-4'} gap-2.5`} role="radiogroup" aria-label="Difficulty">
                 {slots.map(diff => {
                     const available = difficulties.includes(diff);
@@ -47,16 +47,16 @@ export const DifficultySelector: React.FC<DifficultySelectorProps> = ({ difficul
                             disabled={!available}
                             onClick={() => onSelectDifficulty(diff)}
                             title={tooltip || undefined}
-                            className="px-4 py-3.5 rounded-[10px] border backdrop-blur-sm flex flex-wrap items-baseline justify-between transition-colors hover:bg-white/[.04] disabled:opacity-35 disabled:cursor-not-allowed disabled:hover:bg-transparent"
-                            style={{
-                                borderColor: selected ? '#ffffff' : 'rgba(255,255,255,0.08)',
-                                background: selected ? 'rgba(255,255,255,0.05)' : 'rgba(255,255,255,0.015)',
-                            }}
+                            className={`px-4 py-3.5 rounded-[10px] border backdrop-blur-sm flex flex-wrap items-baseline justify-between transition-all disabled:opacity-40 disabled:cursor-not-allowed ${
+                                selected
+                                    ? 'bg-white border-[#008c3c] ring-2 ring-[#008c3c]/20 shadow-[0_4px_14px_rgba(0,140,60,0.10)]'
+                                    : 'bg-white/85 border-[#dce3dd] hover:bg-white hover:border-[#b7c5ba]'
+                            }`}
                         >
                             <span className="font-bold text-[15px] tracking-[.08em]" style={{ color }}>{diff}</span>
-                            <span className={`text-[26px] font-semibold leading-none ${selected ? 'text-white' : 'text-slate-500'}`}>{available ? (level ?? '?') : 'N/A'}</span>
+                            <span className={`text-[26px] font-semibold leading-none ${selected ? 'text-[#16201a]' : 'text-[#4b5c53]'}`}>{available ? (level ?? '?') : 'N/A'}</span>
                             {estimate !== null && (
-                                <span className="basis-full mt-1.5 font-mono text-[11px] text-slate-500 text-left" title="Estimated size of the exported .zip (chart + illustration + audio)">{formatEstimate(estimate)}</span>
+                                <span className="basis-full mt-1.5 font-mono text-[11px] text-[#73857b] text-left" title="Estimated size of the exported .zip (chart + illustration + audio)">{formatEstimate(estimate)}</span>
                             )}
                         </button>
                     );

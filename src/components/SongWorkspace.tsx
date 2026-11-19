@@ -30,7 +30,7 @@ interface SongWorkspaceProps {
 
 // How far (px) the file list has to scroll before the illustration is fully dimmed.
 const DIM_DISTANCE = 320;
-const MAX_DIM = 0.82;
+const MAX_DIM = 0.85;
 // Max distance (px) the illustration drifts from centre while following the pointer. Must stay below the -inset-6 bleed.
 const PARALLAX_SHIFT = 14;
 
@@ -104,13 +104,13 @@ export const SongWorkspace: React.FC<SongWorkspaceProps> = ({
         el?.scrollTo({ top: el.scrollHeight, behavior: 'smooth' });
     };
 
-    const isExporting =exportState.type !== null;
+    const isExporting = exportState.type !== null;
     const dim = Math.min(scrollTop / DIM_DISTANCE, 1) * MAX_DIM;
 
     return (
-        <div className="relative h-full min-h-0 overflow-hidden">
-            {/* Illustration layer */}
-            <div className="absolute inset-0 bg-[repeating-linear-gradient(135deg,#141b29_0_10px,#0f1521_10px_20px)]" />
+        <div className="relative h-full min-h-0 overflow-hidden bg-[#f3f5f3]">
+            {/* Illustration layer with soft JR-paper fade */}
+            <div className="absolute inset-0 bg-[repeating-linear-gradient(135deg,#e9eee9_0_10px,#e2e8e3_10px_20px)]" />
             <div ref={parallaxRef} className="absolute -inset-6 will-change-transform" aria-hidden="true">
                 <div
                     className="absolute inset-0 bg-cover bg-center transition-[opacity,transform] duration-700 ease-out"
@@ -121,8 +121,8 @@ export const SongWorkspace: React.FC<SongWorkspaceProps> = ({
                     }}
                 />
             </div>
-            <div className="absolute inset-0 pointer-events-none bg-[linear-gradient(to_bottom,rgba(9,11,16,0)_15%,rgba(9,11,16,.7)_50%,#090b10_82%)]" />
-            <div className="absolute inset-0 pointer-events-none bg-[#090b10]" style={{ opacity: dim }} />
+            <div className="absolute inset-0 pointer-events-none bg-[linear-gradient(to_bottom,rgba(243,245,243,0.18)_10%,rgba(243,245,243,0.78)_48%,#f3f5f3_78%)]" />
+            <div className="absolute inset-0 pointer-events-none bg-[#f3f5f3]" style={{ opacity: dim }} />
 
             <div
                 ref={scrollRef}
@@ -131,18 +131,18 @@ export const SongWorkspace: React.FC<SongWorkspaceProps> = ({
             >
                 {!song ? (
                     <div className="min-h-full flex flex-col justify-end gap-2 px-5 sm:px-10 pb-12">
-                        <span className="font-mono text-[11px] font-medium tracking-[.12em] text-[#22d3ee]">NO SONG SELECTED</span>
-                        <span className="text-[32px] sm:text-[52px] font-bold leading-[1.15] tracking-[-0.01em] text-white">Pick a song</span>
-                        <span className="text-base text-slate-400">Choose one from the list to see its charts and files.</span>
+                        <span className="font-mono text-[11px] font-semibold tracking-[.14em] text-[#008c3c]">NO SONG SELECTED</span>
+                        <span className="text-[32px] sm:text-[52px] font-bold leading-[1.15] tracking-[-0.01em] text-[#16201a]">Pick a song</span>
+                        <span className="text-base text-[#4b5c53]">Choose one from the list to see its charts and files.</span>
                     </div>
                 ) : (
                     <>
                         <div className="min-h-full flex flex-col justify-end gap-5 px-5 sm:px-10 pt-10">
                             <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-4 lg:gap-6">
                                 <div className="flex flex-col gap-1 min-w-0">
-                                    <span className="relative z-10 self-start -my-1 py-1 font-mono text-[11px] font-medium tracking-[.12em] text-[#22d3ee] break-all select-all cursor-text" title="Song ID">{song.id}</span>
-                                    <h2 className="text-[32px] sm:text-[52px] font-bold leading-[1.15] tracking-[-0.01em] text-white break-words">{song.name}</h2>
-                                    <span className="text-base text-slate-400">{song.composer}</span>
+                                    <span className="relative z-10 self-start px-2 py-0.5 rounded bg-[#e8f5ee] border border-[#008c3c]/25 font-mono text-[11px] font-semibold tracking-[.1em] text-[#008c3c] break-all select-all cursor-text" title="Song ID">{song.id}</span>
+                                    <h2 className="text-[32px] sm:text-[52px] font-bold leading-[1.15] tracking-[-0.01em] text-[#16201a] break-words drop-shadow-[0_1px_12px_rgba(243,245,243,0.9)]">{song.name}</h2>
+                                    <span className="text-base font-medium text-[#4b5c53]">{song.composer}</span>
                                 </div>
                                 {settings.newUiAudioPreview && audio && (
                                     <div className="self-start lg:self-auto">
@@ -153,10 +153,10 @@ export const SongWorkspace: React.FC<SongWorkspaceProps> = ({
 
                             {isLoadingFiles ? (
                                 <div className="flex flex-col gap-2.5">
-                                    <span className="font-mono text-[10px] font-medium tracking-[.14em] text-slate-500">LOADING DIFFICULTIES...</span>
+                                    <span className="font-mono text-[10px] font-semibold tracking-[.14em] text-[#4b5c53]">LOADING DIFFICULTIES...</span>
                                     <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
                                         {[0, 1, 2, 3].map(i => (
-                                            <div key={i} className="h-[56px] rounded-[10px] border border-white/[.06] bg-white/[.015] animate-pulse" />
+                                            <div key={i} className="h-[56px] rounded-[10px] border border-[#dce3dd] bg-white/70 animate-pulse" />
                                         ))}
                                     </div>
                                 </div>
@@ -169,7 +169,7 @@ export const SongWorkspace: React.FC<SongWorkspaceProps> = ({
                                     files={files}
                                 />
                             ) : (
-                                <p className="text-sm text-slate-500">No charts were found for this song.</p>
+                                <p className="text-sm text-[#73857b]">No charts were found for this song.</p>
                             )}
 
                             <div className="flex flex-col sm:flex-row gap-2.5">
@@ -177,11 +177,11 @@ export const SongWorkspace: React.FC<SongWorkspaceProps> = ({
                                     type="button"
                                     onClick={onExportChart}
                                     disabled={isExporting || !selectedDifficulty}
-                                    className="export-glow relative overflow-hidden flex-1 h-[52px] rounded-[10px] bg-[#22d3ee] hover:bg-[#67e8f9] text-[#06141a] flex items-center justify-center gap-2.5 font-bold text-[15px] tracking-[.04em] transition-colors disabled:cursor-not-allowed disabled:bg-[#22d3ee]/40 disabled:hover:bg-[#22d3ee]/40"
+                                    className="export-glow relative overflow-hidden flex-1 h-[52px] rounded-[10px] bg-[#008c3c] hover:bg-[#007331] text-white flex items-center justify-center gap-2.5 font-bold text-[15px] tracking-[.03em] transition-colors disabled:cursor-not-allowed disabled:bg-[#008c3c]/40 disabled:hover:bg-[#008c3c]/40"
                                 >
                                     {exportState.type === 'chart' ? (
                                         <>
-                                            <span className="[&_svg]:text-[#06141a]"><Spinner /></span>
+                                            <span className="[&_svg]:text-white"><Spinner /></span>
                                             Exporting…
                                         </>
                                     ) : (
@@ -190,23 +190,23 @@ export const SongWorkspace: React.FC<SongWorkspaceProps> = ({
                                             Export [{selectedDifficulty ?? ''}] for Phira &amp; RPE
                                         </>
                                     )}
-                                    {exportState.type === 'chart' && <ProgressBar progress={exportState.progress} className="bg-[#06141a]/40" />}
+                                    {exportState.type === 'chart' && <ProgressBar progress={exportState.progress} className="bg-white/45" />}
                                 </button>
                                 <button
                                     type="button"
                                     onClick={onExportAllAssets}
                                     disabled={isExporting || files.length === 0}
-                                    className="relative overflow-hidden h-[52px] px-5 rounded-[10px] border border-white/[.12] text-slate-200 flex items-center justify-center gap-2.5 font-semibold text-sm backdrop-blur-sm hover:bg-white/[.04] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                                    className="relative overflow-hidden h-[52px] px-5 rounded-[10px] border border-[#dce3dd] bg-white/90 text-[#16201a] flex items-center justify-center gap-2.5 font-semibold text-sm backdrop-blur-sm hover:bg-white hover:border-[#b7c5ba] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                                 >
                                     {exportState.type === 'phira' ? <><Spinner />Zipping…</> : 'All assets .zip'}
-                                    {exportState.type === 'phira' && <ProgressBar progress={exportState.progress} className="bg-[#22d3ee]/75" />}
+                                    {exportState.type === 'phira' && <ProgressBar progress={exportState.progress} className="bg-[#008c3c]" />}
                                 </button>
                             </div>
 
                             <button
                                 type="button"
                                 onClick={scrollToFiles}
-                                className="flex items-center justify-center gap-2 h-12 border-t border-white/[.06] text-[13px] text-slate-400 hover:text-slate-200 transition-colors"
+                                className="flex items-center justify-center gap-2 h-12 border-t border-[#dce3dd] text-[13px] font-medium text-[#4b5c53] hover:text-[#008c3c] transition-colors"
                             >
                                 <ChevronDownIcon className="w-3.5 h-3.5 [stroke-width:2]" />
                                 Scroll down for individual files

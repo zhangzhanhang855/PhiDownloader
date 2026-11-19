@@ -38,12 +38,12 @@ const Toggle: React.FC<{ enabled: boolean; onChange: (v: boolean) => void; disab
         aria-label={label}
         disabled={disabled}
         onClick={() => onChange(!enabled)}
-        className="relative w-[42px] h-6 rounded-full transition-colors duration-200 disabled:cursor-not-allowed focus:outline-none focus-visible:ring-2 focus-visible:ring-[#22d3ee]/60"
-        style={{ background: enabled ? '#22d3ee' : 'rgba(255,255,255,0.12)' }}
+        className="relative w-[42px] h-6 rounded-full transition-colors duration-200 disabled:cursor-not-allowed focus:outline-none focus-visible:ring-2 focus-visible:ring-[#008c3c]/50"
+        style={{ background: enabled ? '#008c3c' : '#cbd5ce' }}
     >
         <span
-            className="absolute top-[3px] left-[3px] w-[18px] h-[18px] rounded-full transition-transform duration-200"
-            style={{ background: enabled ? '#06141a' : '#cbd5e1', transform: `translateX(${enabled ? 18 : 0}px)` }}
+            className="absolute top-[3px] left-[3px] w-[18px] h-[18px] rounded-full bg-white shadow transition-transform duration-200"
+            style={{ transform: `translateX(${enabled ? 18 : 0}px)` }}
         />
     </button>
 );
@@ -55,7 +55,7 @@ function Segmented<T extends string | boolean>({ value, options, onChange, disab
     disabled?: boolean;
 }) {
     return (
-        <div className="flex p-[3px] gap-0.5 rounded-[9px] bg-white/[.04] border border-white/[.08]" role="radiogroup">
+        <div className="flex p-[3px] gap-0.5 rounded-[9px] bg-[#f3f5f3] border border-[#dce3dd]" role="radiogroup">
             {options.map(([v, label]) => {
                 const selected = v === value;
                 return (
@@ -67,7 +67,7 @@ function Segmented<T extends string | boolean>({ value, options, onChange, disab
                         disabled={disabled}
                         onClick={() => onChange(v)}
                         className={`px-3.5 py-[5px] max-md:py-[7px] rounded-md text-[13px] font-semibold transition-colors disabled:cursor-not-allowed ${
-                            selected ? 'bg-[rgba(34,211,238,0.14)] text-[#22d3ee]' : 'text-slate-400 hover:text-slate-200'
+                            selected ? 'bg-[#008c3c] text-white shadow-sm' : 'text-[#4b5c53] hover:text-[#16201a]'
                         }`}
                     >
                         {label}
@@ -123,16 +123,16 @@ const Slider: React.FC<{
                 onPointerMove={disabled ? undefined : (e) => {
                     if (e.currentTarget.hasPointerCapture(e.pointerId)) setFromPointer(e.clientX);
                 }}
-                className={`relative w-[120px] max-md:w-[160px] h-5 max-md:h-7 flex items-center touch-none focus:outline-none focus-visible:ring-2 focus-visible:ring-[#22d3ee]/60 rounded ${disabled ? 'cursor-not-allowed' : 'cursor-pointer'}`}
+                className={`relative w-[120px] max-md:w-[160px] h-5 max-md:h-7 flex items-center touch-none focus:outline-none focus-visible:ring-2 focus-visible:ring-[#008c3c]/50 rounded ${disabled ? 'cursor-not-allowed' : 'cursor-pointer'}`}
             >
-                <div className="w-full h-1 rounded-sm bg-white/[.12]" />
-                <div className="absolute left-0 h-1 rounded-sm bg-[#22d3ee]" style={{ width: `${pct}%` }} />
+                <div className="w-full h-1 rounded-sm bg-[#dce3dd]" />
+                <div className="absolute left-0 h-1 rounded-sm bg-[#008c3c]" style={{ width: `${pct}%` }} />
                 <div
-                    className="absolute w-3.5 h-3.5 -ml-[7px] rounded-full bg-slate-100 shadow-[0_0_0_3px_rgba(34,211,238,.25)]"
+                    className="absolute w-3.5 h-3.5 -ml-[7px] rounded-full bg-white border-2 border-[#008c3c] shadow"
                     style={{ left: `${pct}%` }}
                 />
             </div>
-            <span className="w-10 text-right font-mono text-xs font-medium text-slate-400">{format(value)}</span>
+            <span className="w-10 text-right font-mono text-xs font-medium text-[#4b5c53]">{format(value)}</span>
         </>
     );
 };
@@ -149,16 +149,16 @@ interface RowProps {
 
 const Row: React.FC<RowProps> = ({ title, description, badge, sub, disabled, first, children }) => (
     <div
-        className={`flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-7 py-4 transition-opacity duration-200 ${first ? '' : 'border-t border-white/[.06]'} ${disabled ? 'opacity-40' : ''}`}
+        className={`flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-7 py-4 transition-opacity duration-200 ${first ? '' : 'border-t border-[#e8ede9]'} ${disabled ? 'opacity-40' : ''}`}
     >
-        <div className={`flex-1 min-w-0 flex flex-col gap-0.5 ${sub ? 'ml-1 pl-4 border-l-2 border-white/[.08]' : ''}`}>
-            <span className="flex items-center gap-2 text-[15px] font-semibold text-slate-200">
+        <div className={`flex-1 min-w-0 flex flex-col gap-0.5 ${sub ? 'ml-1 pl-4 border-l-2 border-[#dce3dd]' : ''}`}>
+            <span className="flex items-center gap-2 text-[15px] font-semibold text-[#16201a]">
                 {title}
                 {badge && (
-                    <span className="font-mono text-[9px] font-semibold tracking-[.1em] text-[#fbbf24] px-1.5 py-0.5 rounded bg-[rgba(251,191,36,.1)]">{badge}</span>
+                    <span className="font-mono text-[9px] font-semibold tracking-[.1em] text-[#b45309] px-1.5 py-0.5 rounded bg-[#fef3c7]">{badge}</span>
                 )}
             </span>
-            <span className="text-[13px] leading-[1.5] text-slate-400 text-pretty">{description}</span>
+            <span className="text-[13px] leading-[1.5] text-[#4b5c53] text-pretty">{description}</span>
         </div>
         <div className={`flex-none flex items-center gap-2.5 ${sub ? 'ml-[22px] sm:ml-0' : ''}`}>{children}</div>
     </div>
@@ -220,7 +220,7 @@ export const SettingsPopup: React.FC<SettingsPopupProps> = ({ isOpen, onClose, i
             <Row sub disabled={noAudio} title="Loop" description="Loop back to the beginning when the song ends.">
                 <Toggle label="Loop" enabled={settings.newUiLoopAudio} onChange={v => update('newUiLoopAudio', v)} disabled={noAudio} />
             </Row>
-            <Row title="Blur" description="Blur the content behind popups and glass panels. When off, a black fade is used instead.">
+            <Row title="Blur" description="Blur the content behind popups and glass panels. When off, a solid tint is used instead.">
                 <Toggle label="Blur" enabled={settings.newUiBlur} onChange={v => update('newUiBlur', v)} />
             </Row>
             {!isMobile && (
@@ -234,8 +234,8 @@ export const SettingsPopup: React.FC<SettingsPopupProps> = ({ isOpen, onClose, i
     const renderProxy = () => (
         <>
             <div className="pt-4 flex flex-col gap-1">
-                <span className="text-[15px] font-semibold text-slate-200">Proxy source</span>
-                <span className="text-[13px] leading-[1.5] text-slate-400 text-pretty">
+                <span className="text-[15px] font-semibold text-[#16201a]">Proxy source</span>
+                <span className="text-[13px] leading-[1.5] text-[#4b5c53] text-pretty">
                     Proxies may help with accessing GitHub in restricted regions or avoiding rate limits. Use GitHub official whenever possible.
                 </span>
             </div>
@@ -251,25 +251,25 @@ export const SettingsPopup: React.FC<SettingsPopupProps> = ({ isOpen, onClose, i
                             onClick={() => update('proxySource', option.id)}
                             className={`text-left flex items-center gap-3.5 px-3.5 py-3 rounded-[10px] border transition-colors ${
                                 selected
-                                    ? 'border-[rgba(34,211,238,0.5)] bg-[rgba(34,211,238,0.06)]'
-                                    : 'border-white/[.07] bg-white/[.015] hover:border-white/[.18]'
+                                    ? 'border-[#008c3c] bg-[#e8f5ee]'
+                                    : 'border-[#dce3dd] bg-[#f8faf8] hover:border-[#b7c5ba]'
                             }`}
                         >
-                            <span className={`w-4 h-4 flex-none rounded-full border-[1.5px] flex items-center justify-center ${selected ? 'border-[#22d3ee]' : 'border-slate-600'}`}>
-                                <span className={`w-2 h-2 rounded-full ${selected ? 'bg-[#22d3ee]' : ''}`} />
+                            <span className={`w-4 h-4 flex-none rounded-full border-[1.5px] flex items-center justify-center ${selected ? 'border-[#008c3c]' : 'border-[#8b9a91]'}`}>
+                                <span className={`w-2 h-2 rounded-full ${selected ? 'bg-[#008c3c]' : ''}`} />
                             </span>
                             <span className="flex-1 min-w-0 flex flex-col">
-                                <span className="text-sm font-semibold text-slate-200">{option.label}</span>
-                                <span className="text-xs text-slate-400">{option.description}</span>
+                                <span className="text-sm font-semibold text-[#16201a]">{option.label}</span>
+                                <span className="text-xs text-[#4b5c53]">{option.description}</span>
                             </span>
-                            <span className={`font-mono text-[10px] font-medium ${selected ? 'text-[#22d3ee]' : 'text-slate-600'}`}>{PROXY_TAGS[option.id]}</span>
+                            <span className={`font-mono text-[10px] font-semibold ${selected ? 'text-[#008c3c]' : 'text-[#73857b]'}`}>{PROXY_TAGS[option.id]}</span>
                         </button>
                     );
                 })}
             </div>
-            <div className="mt-7 pt-5 border-t border-white/[.06] flex flex-col gap-1">
-                <span className="text-[15px] font-semibold text-slate-200">GitHub access token</span>
-                <span className="text-[13px] leading-[1.5] text-slate-400 text-pretty">
+            <div className="mt-7 pt-5 border-t border-[#e8ede9] flex flex-col gap-1">
+                <span className="text-[15px] font-semibold text-[#16201a]">GitHub access token</span>
+                <span className="text-[13px] leading-[1.5] text-[#4b5c53] text-pretty">
                     Optional personal access token for higher GitHub rate limits. No scopes are needed. It is stored only in this browser and sent only to GitHub when the source is set to GitHub.
                 </span>
             </div>
@@ -282,7 +282,7 @@ export const SettingsPopup: React.FC<SettingsPopupProps> = ({ isOpen, onClose, i
                     autoComplete="off"
                     spellCheck={false}
                     aria-label="GitHub personal access token"
-                    className="flex-1 min-w-0 h-[38px] max-md:h-11 px-3 rounded-lg bg-white/[.04] border border-white/[.08] font-mono text-xs max-md:text-base text-slate-200 placeholder:text-slate-600 focus:outline-none focus:border-[#22d3ee]/50"
+                    className="flex-1 min-w-0 h-[38px] max-md:h-11 px-3 rounded-lg bg-[#f8faf8] border border-[#dce3dd] font-mono text-xs max-md:text-base text-[#16201a] placeholder:text-[#8b9a91] focus:outline-none focus:border-[#008c3c]"
                 />
                 <Button variant="outline" className="py-[7px] max-md:h-11" onClick={() => update('githubToken', '')} disabled={!settings.githubToken}>Clear</Button>
             </div>
@@ -309,7 +309,7 @@ export const SettingsPopup: React.FC<SettingsPopupProps> = ({ isOpen, onClose, i
 
             <div className="flex-1 min-h-0 flex flex-col sm:grid sm:grid-cols-[184px_minmax(0,1fr)]">
                 <nav
-                    className="flex sm:flex-col gap-0.5 px-3 py-2 sm:py-4 border-b sm:border-b-0 sm:border-r border-white/[.06] overflow-x-auto"
+                    className="flex sm:flex-col gap-0.5 px-3 py-2 sm:py-4 border-b sm:border-b-0 sm:border-r border-[#e8ede9] bg-[#f8faf8] overflow-x-auto"
                     role="tablist"
                     aria-label="Settings categories"
                 >
@@ -323,17 +323,17 @@ export const SettingsPopup: React.FC<SettingsPopupProps> = ({ isOpen, onClose, i
                                 aria-selected={selected}
                                 onClick={() => setCategory(id)}
                                 className={`flex-none flex items-center justify-between gap-3 h-10 px-3 rounded-lg text-sm font-medium transition-colors ${
-                                    selected ? 'bg-[rgba(34,211,238,0.08)] text-[#22d3ee]' : 'text-slate-400 hover:text-slate-100'
+                                    selected ? 'bg-[#e8f5ee] text-[#008c3c] font-semibold' : 'text-[#4b5c53] hover:text-[#16201a] hover:bg-[#eef2ee]'
                                 }`}
                             >
                                 <span>{label}</span>
-                                <span className="font-mono text-[10px] font-medium text-slate-600">{String(i + 1).padStart(2, '0')}</span>
+                                <span className={`font-mono text-[10px] font-medium ${selected ? 'text-[#008c3c]' : 'text-[#8b9a91]'}`}>{String(i + 1).padStart(2, '0')}</span>
                             </button>
                         );
                     })}
                 </nav>
 
-                <div className="flex-1 min-h-0 overflow-y-auto thin-scroll px-5 sm:px-7 pt-1 pb-5" role="tabpanel">
+                <div className="flex-1 min-h-0 overflow-y-auto thin-scroll px-5 sm:px-7 pt-1 pb-5 bg-white" role="tabpanel">
                     {category === 'export' && renderExport()}
                     {category === 'visual' && renderVisual()}
                     {category === 'proxy' && renderProxy()}
@@ -341,10 +341,10 @@ export const SettingsPopup: React.FC<SettingsPopupProps> = ({ isOpen, onClose, i
                 </div>
             </div>
 
-            <div className="flex-none min-h-[68px] flex flex-wrap items-center justify-between gap-3 px-6 py-3 max-md:px-5 max-md:pb-[calc(16px+env(safe-area-inset-bottom))] border-t border-white/[.06] bg-white/[.015]">
+            <div className="flex-none min-h-[68px] flex flex-wrap items-center justify-between gap-3 px-6 py-3 max-md:px-5 max-md:pb-[calc(16px+env(safe-area-inset-bottom))] border-t border-[#e8ede9] bg-[#f8faf8]">
                 {confirmReset ? (
                     <div className="flex items-center gap-2.5">
-                        <span className="text-[13px] text-[#fca5a5]">Reset all settings?</span>
+                        <span className="text-[13px] text-[#dc2626] font-medium">Reset all settings?</span>
                         <Button variant="danger" className="py-[7px]" onClick={() => { setSettings(defaultSettings); setConfirmReset(false); }}>Reset</Button>
                         <Button variant="outline" className="py-[7px]" onClick={() => setConfirmReset(false)}>Cancel</Button>
                     </div>
@@ -352,7 +352,7 @@ export const SettingsPopup: React.FC<SettingsPopupProps> = ({ isOpen, onClose, i
                     <button
                         type="button"
                         onClick={() => setConfirmReset(true)}
-                        className="flex items-center gap-2 text-[13px] font-semibold text-[#f87171] px-3 py-2 -ml-3 rounded-lg hover:bg-[rgba(248,113,113,.08)] transition-colors"
+                        className="flex items-center gap-2 text-[13px] font-semibold text-[#dc2626] px-3 py-2 -ml-3 rounded-lg hover:bg-[#fee2e2]/60 transition-colors"
                     >
                         <svg width="15" height="15" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
                             <path strokeLinecap="round" strokeLinejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" />
@@ -361,7 +361,7 @@ export const SettingsPopup: React.FC<SettingsPopupProps> = ({ isOpen, onClose, i
                     </button>
                 )}
                 <div className="flex items-center gap-4">
-                    <span className="hidden sm:inline font-mono text-[10px] font-medium tracking-[.1em] text-slate-600">SAVED/APPLIED AUTOMATICALLY</span>
+                    <span className="hidden sm:inline font-mono text-[10px] font-medium tracking-[.1em] text-[#73857b]">SAVED/APPLIED AUTOMATICALLY</span>
                     <Button variant="primary" size="md" onClick={onClose}>Done</Button>
                 </div>
             </div>

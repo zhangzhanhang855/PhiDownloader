@@ -1,4 +1,3 @@
-
 import React, { useEffect, useRef, useState } from 'react';
 import { resourceFetch } from '../utils/githubAuth';
 import { SpeakerWaveIcon, SpeakerXMarkIcon } from './Icons';
@@ -245,17 +244,17 @@ export const AudioPlayerControl: React.FC<AudioPlayerControlProps> = ({ audio, v
     };
 
     return (
-        <div className={`flex items-center gap-3 rounded-full bg-[rgba(9,11,16,.6)] backdrop-blur-md border border-white/[.08] ${mobile ? 'w-full p-1.5' : 'flex-none py-2 pl-2 pr-3.5'}`}>
+        <div className={`flex items-center gap-3 rounded-full bg-white/90 backdrop-blur-md border border-[#dce3dd] shadow-[0_2px_10px_rgba(22,32,26,0.06)] ${mobile ? 'w-full p-1.5' : 'flex-none py-2 pl-2 pr-3.5'}`}>
             <button
                 type="button"
                 onClick={togglePlay}
                 aria-label={isPlaying ? 'Pause' : 'Play'}
-                className={`${mobile ? 'w-10 h-10' : 'w-8 h-8'} flex-none rounded-full bg-[#22d3ee] hover:bg-[#67e8f9] flex items-center justify-center transition-colors`}
+                className={`${mobile ? 'w-10 h-10' : 'w-8 h-8'} flex-none rounded-full bg-[#008c3c] hover:bg-[#007331] flex items-center justify-center transition-colors`}
             >
                 {isPlaying ? (
-                    <svg width={mobile ? 18 : 16} height={mobile ? 18 : 16} fill="#090b10" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" /></svg>
+                    <svg width={mobile ? 18 : 16} height={mobile ? 18 : 16} fill="#ffffff" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" /></svg>
                 ) : (
-                    <svg width={mobile ? 18 : 16} height={mobile ? 18 : 16} fill="#090b10" viewBox="0 0 24 24"><path d="M8 5v14l11-7z" /></svg>
+                    <svg width={mobile ? 18 : 16} height={mobile ? 18 : 16} fill="#ffffff" viewBox="0 0 24 24"><path d="M8 5v14l11-7z" /></svg>
                 )}
             </button>
 
@@ -284,20 +283,20 @@ export const AudioPlayerControl: React.FC<AudioPlayerControlProps> = ({ audio, v
                 onPointerCancel={() => setIsDragging(false)}
                 className={`group relative ${mobile ? 'flex-1 min-w-0 h-8' : 'w-20 sm:w-[140px] h-4'} flex items-center touch-none focus:outline-none ${canSeek ? 'cursor-pointer' : 'cursor-progress'}`}
             >
-                <div className="w-full h-[3px] rounded-sm bg-white/[.12] overflow-hidden">
-                    <div className={`h-full rounded-sm bg-[#22d3ee] ${canSeek ? '' : 'opacity-50'}`} style={{ width: `${progress * 100}%` }} />
+                <div className="w-full h-[3px] rounded-sm bg-[#dce3dd] overflow-hidden">
+                    <div className={`h-full rounded-sm bg-[#008c3c] ${canSeek ? '' : 'opacity-50'}`} style={{ width: `${progress * 100}%` }} />
                 </div>
                 {canSeek && (
                     <div
                         className={mobile
-                            ? 'absolute w-3 h-3 -ml-1.5 rounded-full bg-slate-100'
-                            : 'absolute w-2.5 h-2.5 -ml-[5px] rounded-full bg-slate-100 opacity-0 group-hover:opacity-100 group-focus-visible:opacity-100 transition-opacity'}
+                            ? 'absolute w-3 h-3 -ml-1.5 rounded-full bg-[#008c3c] shadow'
+                            : 'absolute w-2.5 h-2.5 -ml-[5px] rounded-full bg-[#008c3c] opacity-0 group-hover:opacity-100 group-focus-visible:opacity-100 transition-opacity'}
                         style={{ left: `${progress * 100}%` }}
                     />
                 )}
             </div>
 
-            <span className="flex-none font-mono text-[11px] font-medium text-slate-400 tabular-nums whitespace-nowrap">
+            <span className="flex-none font-mono text-[11px] font-medium text-[#4b5c53] tabular-nums whitespace-nowrap">
                 {formatTime(currentTime)} / {formatTime(duration)}
             </span>
 
@@ -307,8 +306,8 @@ export const AudioPlayerControl: React.FC<AudioPlayerControlProps> = ({ audio, v
                 aria-label={isMuted ? 'Unmute' : 'Mute'}
                 title={isMuted ? 'Unmute' : 'Mute'}
                 className={mobile
-                    ? 'w-10 h-10 flex-none rounded-full flex items-center justify-center text-slate-400'
-                    : 'hidden sm:block text-slate-500 hover:text-slate-200 transition-colors'}
+                    ? 'w-10 h-10 flex-none rounded-full flex items-center justify-center text-[#4b5c53]'
+                    : 'hidden sm:block text-[#73857b] hover:text-[#16201a] transition-colors'}
             >
                 {isMuted ? <SpeakerXMarkIcon className={mobile ? 'w-[18px] h-[18px]' : 'w-4 h-4'} /> : <SpeakerWaveIcon className={mobile ? 'w-[18px] h-[18px]' : 'w-4 h-4'} />}
             </button>

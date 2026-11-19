@@ -25,9 +25,9 @@ export const AssetDownloadWarningPopup: React.FC<AssetDownloadWarningPopupProps>
                 </>
             }
         >
-            <p className="text-[13px] leading-[1.6] text-slate-400 text-pretty">
+            <p className="text-[13px] leading-[1.6] text-[#4b5c53] text-pretty">
                 It can&apos;t be imported into Phira or RPE on its own. To get a playable file, pick a difficulty and use{' '}
-                <b className="text-[#22d3ee] font-semibold">Export for Phira &amp; RPE</b>.
+                <b className="text-[#008c3c] font-semibold">Export for Phira &amp; RPE</b>.
             </p>
         </NoticeDialog>
     );

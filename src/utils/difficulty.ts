@@ -1,14 +1,14 @@
 export const DIFFICULTY_ORDER = ['EZ', 'HD', 'IN', 'AT'] as const;
 
 const DIFFICULTY_COLORS: Record<string, string> = {
-    EZ: '#4ade80',
-    HD: '#38bdf8',
-    IN: '#f87171',
-    AT: '#e2e8f0',
+    EZ: '#15803d',
+    HD: '#0284c7',
+    IN: '#dc2626',
+    AT: '#334155',
 };
 
 // Used for charts outside the four standard difficulties (e.g. extra charts such as SP).
-const EXTRA_DIFFICULTY_COLOR = '#c084fc';
+const EXTRA_DIFFICULTY_COLOR = '#7e22ce';
 
 export const getDifficultyColor = (difficulty: string): string =>
     DIFFICULTY_COLORS[difficulty] ?? EXTRA_DIFFICULTY_COLOR;

@@ -49,7 +49,7 @@ interface MobileLayoutProps {
     toast: { id: number; text: string } | null;
 }
 
-const eyebrow = 'font-mono text-[10px] font-medium tracking-[.16em] text-[#22d3ee]';
+const eyebrow = 'font-mono text-[10px] font-semibold tracking-[.16em] text-[#008c3c]';
 
 /** Phone layout: the library gets the full height and a song opens as a pushed page. */
 export const MobileLayout: React.FC<MobileLayoutProps> = ({
@@ -127,7 +127,7 @@ export const MobileLayout: React.FC<MobileLayoutProps> = ({
         open();
     };
 
-    const dot = versionError ? '#f87171' : isLoadingVersion ? '#fbbf24' : '#4ade80';
+    const dot = versionError ? '#dc2626' : isLoadingVersion ? '#d97706' : '#008c3c';
     const versionLabel = versionError ? 'Failed · retry' : isLoadingVersion ? 'Loading …' : `Phigros v${version}`;
     const proxyLabel = PROXY_SOURCES.find(p => p.id === settings.proxySource)?.label ?? '';
 
@@ -138,7 +138,7 @@ export const MobileLayout: React.FC<MobileLayoutProps> = ({
     ];
 
     const { minInput, setMinInput, maxInput, setMaxInput, difficultyBounds, displayedSongs } = filter;
-    const rangeInput = 'w-full h-12 rounded-[10px] bg-white/[.04] border border-white/[.08] text-center font-mono text-base font-medium text-slate-200 placeholder:text-slate-500 focus:outline-none focus:border-[rgba(34,211,238,.45)] disabled:opacity-50';
+    const rangeInput = 'w-full h-12 rounded-[10px] bg-[#f8faf8] border border-[#dce3dd] text-center font-mono text-base font-medium text-[#16201a] placeholder:text-[#8b9a91] focus:outline-none focus:border-[#008c3c] disabled:opacity-50';
 
     const renderMenu = () => (
         <div className="flex flex-col gap-3.5">
@@ -149,28 +149,28 @@ export const MobileLayout: React.FC<MobileLayoutProps> = ({
                     onClick={versionError ? onRetryVersion : undefined}
                     disabled={!versionError}
                     title={versionError ?? 'The game version assets are decompiled from'}
-                    className="flex items-center gap-2 px-3 py-[5px] rounded-full border border-white/[.08] font-mono text-[11px] font-medium text-slate-400 whitespace-nowrap"
+                    className="flex items-center gap-2 px-3 py-[5px] rounded-full border border-[#dce3dd] bg-[#f8faf8] font-mono text-[11px] font-medium text-[#4b5c53] whitespace-nowrap"
                 >
-                    <span className={`w-1.5 h-1.5 rounded-full ${isLoadingVersion ? 'animate-pulse' : ''}`} style={{ background: dot, boxShadow: `0 0 8px ${dot}` }} />
+                    <span className={`w-2 h-2 rounded-full ${isLoadingVersion ? 'animate-pulse' : ''}`} style={{ background: dot }} />
                     {versionLabel}
                 </button>
             </div>
-            <div className="flex flex-col rounded-[14px] border border-white/[.07] bg-white/[.02] overflow-hidden">
+            <div className="flex flex-col rounded-[14px] border border-[#dce3dd] bg-white overflow-hidden">
                 {menuItems.map((item, i) => (
                     <button
                         key={item.label}
                         type="button"
                         onClick={item.onClick}
-                        className={`h-14 flex items-center gap-3.5 px-4 text-left text-[15px] text-slate-200 active:bg-white/[.04] ${i ? 'border-t border-white/[.06]' : ''}`}
+                        className={`h-14 flex items-center gap-3.5 px-4 text-left text-[15px] font-medium text-[#16201a] active:bg-[#f1f4f2] ${i ? 'border-t border-[#e8ede9]' : ''}`}
                     >
                         <span className="flex-1">{item.label}</span>
-                        <span className="font-mono text-[11px] font-medium text-slate-500">{item.meta}</span>
-                        <svg width="16" height="16" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="#475569"><path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" /></svg>
+                        <span className="font-mono text-[11px] font-medium text-[#73857b]">{item.meta}</span>
+                        <svg width="16" height="16" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="#8b9a91"><path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" /></svg>
                     </button>
                 ))}
             </div>
-            <p className="text-xs leading-[1.5] text-slate-500 text-center">
-                Source code can be found on <a href={REPO_URL} target="_blank" rel="noreferrer" className="text-[#22d3ee] hover:text-[#67e8f9]">GitHub</a>. All assets belong to their respective copyright holders.
+            <p className="text-xs leading-[1.6] text-[#73857b] text-center">
+                Developed by <b className="text-[#16201a]">JackZhang</b> · Source on <a href={REPO_URL} target="_blank" rel="noreferrer" className="text-[#008c3c] font-medium hover:underline">GitHub</a>.
             </p>
         </div>
     );
@@ -179,7 +179,7 @@ export const MobileLayout: React.FC<MobileLayoutProps> = ({
         <div className="flex flex-col gap-4">
             <div className="flex flex-col gap-0.5">
                 <span className={eyebrow}>DIFFICULTY RANGE</span>
-                <span id="mobile-sheet-title" className="text-[21px] font-semibold text-slate-100">Filter by level</span>
+                <span id="mobile-sheet-title" className="text-[21px] font-semibold text-[#16201a]">Filter by level</span>
             </div>
             <div className="flex items-center gap-2.5">
                 {[
@@ -187,9 +187,9 @@ export const MobileLayout: React.FC<MobileLayoutProps> = ({
                     { label: 'MAX', value: maxInput, set: setMaxInput, placeholder: difficultyBounds?.max },
                 ].map((field, i) => (
                     <React.Fragment key={field.label}>
-                        {i === 1 && <span className="pt-5 text-slate-600">–</span>}
+                        {i === 1 && <span className="pt-5 text-[#8b9a91]">–</span>}
                         <label className="flex-1 flex flex-col gap-1.5">
-                            <span className="font-mono text-[10px] font-medium tracking-[.14em] text-slate-500">{field.label}</span>
+                            <span className="font-mono text-[10px] font-semibold tracking-[.14em] text-[#4b5c53]">{field.label}</span>
                             <input
                                 type="number"
                                 inputMode="decimal"
@@ -210,14 +210,14 @@ export const MobileLayout: React.FC<MobileLayoutProps> = ({
                 <button
                     type="button"
                     onClick={() => { setMinInput(''); setMaxInput(''); }}
-                    className="h-12 px-[18px] rounded-[10px] border border-white/[.12] text-sm font-semibold text-slate-200"
+                    className="h-12 px-[18px] rounded-[10px] border border-[#dce3dd] bg-white text-sm font-semibold text-[#16201a]"
                 >
                     Reset
                 </button>
                 <button
                     type="button"
                     onClick={closeSheet}
-                    className="flex-1 h-12 rounded-[10px] bg-[#22d3ee] text-[#06141a] text-sm font-bold"
+                    className="flex-1 h-12 rounded-[10px] bg-[#008c3c] text-white text-sm font-bold"
                 >
                     Show {displayedSongs.length} songs
                 </button>
@@ -228,7 +228,7 @@ export const MobileLayout: React.FC<MobileLayoutProps> = ({
     const sheetContent = sheet ?? lastSheet;
 
     return (
-        <div className="relative flex-1 min-h-0 overflow-hidden">
+        <div className="relative flex-1 min-h-0 overflow-hidden bg-[#f3f5f3]">
             <MobileLibrary
                 filter={filter}
                 isLoading={isLoadingSongs}
@@ -256,10 +256,10 @@ export const MobileLayout: React.FC<MobileLayoutProps> = ({
                 <div
                     key={toast.id}
                     role="status"
-                    className="motion-toast-mobile fixed left-4 right-4 bottom-[calc(104px+env(safe-area-inset-bottom))] z-30 flex items-center gap-2.5 pl-3 pr-3.5 py-[11px] rounded-xl bg-[rgba(12,15,22,.96)] border border-[rgba(34,211,238,.3)] shadow-[0_20px_50px_rgba(0,0,0,.5)] text-[13px] text-slate-200"
+                    className="motion-toast-mobile fixed left-4 right-4 bottom-[calc(104px+env(safe-area-inset-bottom))] z-30 flex items-center gap-2.5 pl-3 pr-3.5 py-[11px] rounded-xl bg-white border border-[#008c3c]/35 shadow-[0_12px_32px_rgba(22,32,26,0.14)] text-[13px] text-[#16201a]"
                 >
-                    <span className="w-5 h-5 flex-none rounded-full bg-[#22d3ee] flex items-center justify-center">
-                        <svg width="12" height="12" fill="none" viewBox="0 0 24 24" strokeWidth={3} stroke="#06141a"><path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" /></svg>
+                    <span className="w-5 h-5 flex-none rounded-full bg-[#008c3c] flex items-center justify-center">
+                        <svg width="12" height="12" fill="none" viewBox="0 0 24 24" strokeWidth={3} stroke="#ffffff"><path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" /></svg>
                     </span>
                     <span className="min-w-0 truncate">{toast.text}</span>
                 </div>

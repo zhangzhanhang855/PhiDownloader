@@ -24,28 +24,28 @@ export const FAQPopup: React.FC<FAQPopupProps> = ({ isOpen, onClose }) => {
                 {faqData.map((item, i) => {
                     const isOpenItem = openIndex === i;
                     return (
-                        <div key={item.question} className={i ? 'border-t border-white/[.06]' : ''}>
+                        <div key={item.question} className={i ? 'border-t border-[#e8ede9]' : ''}>
                             <button
                                 type="button"
                                 onClick={() => setOpenIndex(isOpenItem ? -1 : i)}
                                 aria-expanded={isOpenItem}
                                 className="w-full text-left grid grid-cols-[32px_minmax(0,1fr)_16px] items-center gap-2 py-[15px]"
                             >
-                                <span className={`font-mono text-[11px] font-medium ${isOpenItem ? 'text-[#22d3ee]' : 'text-slate-600'}`}>
+                                <span className={`font-mono text-[11px] font-semibold ${isOpenItem ? 'text-[#008c3c]' : 'text-[#8b9a91]'}`}>
                                     {String(i + 1).padStart(2, '0')}
                                 </span>
-                                <span className={`text-[15px] font-medium ${isOpenItem ? 'text-slate-100' : 'text-slate-300 hover:text-slate-100'}`}>
+                                <span className={`text-[15px] font-medium ${isOpenItem ? 'text-[#16201a]' : 'text-[#4b5c53] hover:text-[#16201a]'}`}>
                                     {item.question}
                                 </span>
-                                <ChevronDownIcon className={`w-3.5 h-3.5 text-slate-500 transition-transform duration-200 ${isOpenItem ? 'rotate-180' : ''}`} />
+                                <ChevronDownIcon className={`w-3.5 h-3.5 text-[#73857b] transition-transform duration-200 ${isOpenItem ? 'rotate-180' : ''}`} />
                             </button>
                             {isOpenItem && (
-                                <div className="pl-10 pr-6 max-md:pr-2 pb-4 text-sm leading-[1.65] text-slate-400 text-pretty">
+                                <div className="pl-10 pr-6 max-md:pr-2 pb-4 text-sm leading-[1.65] text-[#4b5c53] text-pretty">
                                     {item.answer}
                                     {item.link && (
                                         <>
                                             {' '}
-                                            <a href={item.link.url} target="_blank" rel="noreferrer" className="text-[#22d3ee] hover:text-[#67e8f9]">{item.link.text}</a>.
+                                            <a href={item.link.url} target="_blank" rel="noreferrer" className="text-[#008c3c] font-medium hover:underline">{item.link.text}</a>.
                                         </>
                                     )}
                                 </div>
@@ -56,9 +56,9 @@ export const FAQPopup: React.FC<FAQPopupProps> = ({ isOpen, onClose }) => {
             </div>
 
             <DialogFooter>
-                <span className="text-[13px] text-slate-500">
+                <span className="text-[13px] text-[#4b5c53]">
                     Still stuck? Open an issue on{' '}
-                    <a href={REPO_ISSUES_URL} target="_blank" rel="noreferrer" className="text-[#22d3ee] hover:text-[#67e8f9]">GitHub</a>
+                    <a href={REPO_ISSUES_URL} target="_blank" rel="noreferrer" className="text-[#008c3c] font-medium hover:underline">GitHub</a>
                 </span>
                 <Button variant="outline" size="md" onClick={onClose}>Close</Button>
             </DialogFooter>

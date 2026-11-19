@@ -3,15 +3,15 @@ import React, { useEffect } from 'react';
 export type Tone = 'info' | 'warning' | 'error';
 
 const TOPLINE: Record<Tone, string> = {
-    info: 'linear-gradient(90deg, transparent, rgba(34,211,238,.7), transparent)',
-    warning: 'linear-gradient(90deg, transparent, rgba(251,191,36,.8), transparent)',
-    error: 'linear-gradient(90deg, transparent, rgba(248,113,113,.8), transparent)',
+    info: '#008c3c',
+    warning: '#d97706',
+    error: '#dc2626',
 };
 
 const EYEBROW_COLOR: Record<Tone, string> = {
-    info: 'text-[#22d3ee]',
-    warning: 'text-[#fbbf24]',
-    error: 'text-[#f87171]',
+    info: 'text-[#008c3c]',
+    warning: 'text-[#d97706]',
+    error: 'text-[#dc2626]',
 };
 
 interface DialogFrameProps {
@@ -32,7 +32,7 @@ const MOBILE_PANEL: Record<'sheet' | 'panel', string> = {
     panel: 'max-md:w-full max-md:max-w-none max-md:h-[calc(100dvh-10px)] max-md:max-h-none max-md:rounded-b-none max-md:border-b-0',
 };
 
-/** Dimmed, blurred backdrop plus the shared dark glass panel with a thin tone line along the top. */
+/** Soft backdrop plus clean white JR-styled dialog panel with a solid top accent bar. */
 export const DialogFrame: React.FC<DialogFrameProps> = ({
     onClose,
     closeOnBackdrop = true,
@@ -53,20 +53,20 @@ export const DialogFrame: React.FC<DialogFrameProps> = ({
 
     return (
         <div
-            className="motion-backdrop fixed inset-0 z-50 flex items-center justify-center p-4 max-md:p-0 max-md:items-end bg-[rgba(4,6,10,.78)] backdrop-blur-[6px]"
+            className="motion-backdrop fixed inset-0 z-50 flex items-center justify-center p-4 max-md:p-0 max-md:items-end bg-[rgba(22,32,26,0.38)] backdrop-blur-[5px]"
             role={role}
             aria-modal="true"
             aria-labelledby={labelledBy}
             onClick={closeOnBackdrop ? onClose : undefined}
         >
             <div
-                className={`motion-dialog relative flex flex-col overflow-hidden rounded-2xl border border-white/[.08] bg-[rgba(12,15,22,.97)] shadow-[0_40px_120px_rgba(0,0,0,.6)] ${className} ${MOBILE_PANEL[mobile]}`}
+                className={`motion-dialog relative flex flex-col overflow-hidden rounded-2xl border border-[#dce3dd] bg-white shadow-[0_24px_64px_rgba(22,32,26,0.18)] ${className} ${MOBILE_PANEL[mobile]}`}
                 onClick={(e) => e.stopPropagation()}
             >
                 <div className="dialog-topline" style={{ background: TOPLINE[tone] }} />
                 {mobile === 'sheet' && (
                     <button type="button" onClick={onClose} aria-label="Close" className="md:hidden flex-none -mt-1 -mb-1 h-[22px] flex items-center justify-center">
-                        <span className="w-9 h-1 rounded-sm bg-white/[.18]" />
+                        <span className="w-9 h-1 rounded-sm bg-[#cbd5ce]" />
                     </button>
                 )}
                 {children}
@@ -76,7 +76,7 @@ export const DialogFrame: React.FC<DialogFrameProps> = ({
 };
 
 export const Eyebrow: React.FC<{ tone?: Tone; className?: string; children: React.ReactNode }> = ({ tone = 'info', className = '', children }) => (
-    <span className={`flex items-center gap-2 font-mono text-[10px] font-medium tracking-[.16em] uppercase ${EYEBROW_COLOR[tone]} ${className}`}>
+    <span className={`flex items-center gap-2 font-mono text-[10px] font-semibold tracking-[.16em] uppercase ${EYEBROW_COLOR[tone]} ${className}`}>
         {children}
     </span>
 );
@@ -86,7 +86,7 @@ export const CloseButton: React.FC<{ onClick: () => void }> = ({ onClick }) => (
         type="button"
         onClick={onClick}
         aria-label="Close"
-        className="flex-none w-[34px] h-[34px] max-md:w-11 max-md:h-11 max-md:-mr-1.5 max-md:rounded-[10px] rounded-lg flex items-center justify-center text-slate-400 hover:bg-white/[.06] hover:text-slate-200 transition-colors"
+        className="flex-none w-[34px] h-[34px] max-md:w-11 max-md:h-11 max-md:-mr-1.5 max-md:rounded-[10px] rounded-lg flex items-center justify-center text-[#73857b] hover:bg-[#eef2ee] hover:text-[#16201a] transition-colors"
     >
         <svg width="18" height="18" fill="none" viewBox="0 0 24 24" strokeWidth={1.8} stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
@@ -103,17 +103,17 @@ interface DialogHeaderProps {
 
 /** 68px header used by the large dialogs (Settings, FAQ). */
 export const DialogHeader: React.FC<DialogHeaderProps> = ({ id, eyebrow, title, onClose }) => (
-    <div className="h-[68px] flex-none flex items-center justify-between gap-3 px-6 max-md:px-5 border-b border-white/[.06]">
+    <div className="h-[68px] flex-none flex items-center justify-between gap-3 px-6 max-md:px-5 border-b border-[#e8ede9]">
         <div className="flex flex-col">
             <Eyebrow>{eyebrow}</Eyebrow>
-            <h2 id={id} className="text-[21px] font-semibold leading-[1.25] text-slate-100">{title}</h2>
+            <h2 id={id} className="text-[21px] font-semibold leading-[1.25] text-[#16201a]">{title}</h2>
         </div>
         <CloseButton onClick={onClose} />
     </div>
 );
 
 export const DialogFooter: React.FC<{ children: React.ReactNode; className?: string }> = ({ children, className = '' }) => (
-    <div className={`flex-none min-h-16 flex flex-wrap items-center justify-between gap-3 px-6 py-3 max-md:px-5 max-md:pb-[calc(16px+env(safe-area-inset-bottom))] border-t border-white/[.06] bg-white/[.015] ${className}`}>
+    <div className={`flex-none min-h-16 flex flex-wrap items-center justify-between gap-3 px-6 py-3 max-md:px-5 max-md:pb-[calc(16px+env(safe-area-inset-bottom))] border-t border-[#e8ede9] bg-[#f8faf8] ${className}`}>
         {children}
     </div>
 );
@@ -121,11 +121,11 @@ export const DialogFooter: React.FC<{ children: React.ReactNode; className?: str
 type ButtonVariant = 'primary' | 'warning' | 'danger' | 'outline' | 'ghost';
 
 const BUTTON_VARIANTS: Record<ButtonVariant, string> = {
-    primary: 'bg-[#22d3ee] hover:bg-[#67e8f9] text-[#06141a] font-bold',
-    warning: 'bg-[#fbbf24] hover:bg-[#fcd34d] text-[#1a1204] font-bold',
-    danger: 'bg-[#f87171] hover:bg-[#fca5a5] text-[#1a0a0a] font-bold',
-    outline: 'border border-white/[.12] hover:bg-white/[.05] text-slate-200 font-semibold',
-    ghost: 'text-slate-400 hover:text-white font-semibold',
+    primary: 'bg-[#008c3c] hover:bg-[#007331] text-white font-bold',
+    warning: 'bg-[#d97706] hover:bg-[#b45309] text-white font-bold',
+    danger: 'bg-[#dc2626] hover:bg-[#b91c1c] text-white font-bold',
+    outline: 'border border-[#dce3dd] bg-white hover:bg-[#f1f4f2] text-[#16201a] font-semibold',
+    ghost: 'text-[#4b5c53] hover:text-[#16201a] hover:bg-[#eef2ee] font-semibold',
 };
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
@@ -172,14 +172,14 @@ export const NoticeDialog: React.FC<NoticeDialogProps> = ({ tone, icon, eyebrow,
             role={tone === 'info' ? 'dialog' : 'alertdialog'}
             labelledBy={titleId}
             mobile="sheet"
-            className="w-full max-w-[440px] gap-3.5 px-[22px] pt-[22px] pb-[18px] max-md:px-5 max-md:pt-1 max-md:pb-[calc(24px+env(safe-area-inset-bottom))] max-md:overflow-y-auto shadow-[0_30px_80px_rgba(0,0,0,.5)]"
+            className="w-full max-w-[440px] gap-3.5 px-[22px] pt-[24px] pb-[18px] max-md:px-5 max-md:pt-2 max-md:pb-[calc(24px+env(safe-area-inset-bottom))] max-md:overflow-y-auto shadow-[0_24px_60px_rgba(22,32,26,0.16)]"
         >
             <Eyebrow tone={tone} className="tracking-[.14em]">{icon}{eyebrow}</Eyebrow>
-            <h2 id={titleId} className="text-[19px] max-md:text-[21px] font-semibold leading-[1.3] text-slate-100">{title}</h2>
+            <h2 id={titleId} className="text-[19px] max-md:text-[21px] font-semibold leading-[1.3] text-[#16201a]">{title}</h2>
             {children}
             <div className={`flex flex-wrap items-center gap-2 pt-1 max-md:flex-col-reverse max-md:items-stretch max-md:gap-3.5 ${footnote ? 'justify-between' : 'justify-end'}`}>
                 {footnote && (
-                    <span className="font-mono text-[10px] font-medium tracking-[.08em] uppercase text-slate-600 max-md:text-center">{footnote}</span>
+                    <span className="font-mono text-[10px] font-medium tracking-[.08em] uppercase text-[#73857b] max-md:text-center">{footnote}</span>
                 )}
                 <div className="flex flex-wrap items-center justify-end gap-2 max-md:flex-col-reverse max-md:items-stretch max-md:gap-2.5 max-md:[&>button]:h-[52px] max-md:[&>button]:rounded-xl max-md:[&>button]:text-[15px]">{actions}</div>
             </div>

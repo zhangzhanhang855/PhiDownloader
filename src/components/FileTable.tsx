@@ -102,22 +102,22 @@ export const FileTable: React.FC<FileTableProps> = ({ selectedSong, files, isLoa
         if (chartDiff) {
             const color = getDifficultyColor(chartDiff);
             return (
-                <div className={`${previewBox} h-[34px] rounded-[5px] border flex items-center justify-center`} style={{ borderColor: `${color}55` }}>
+                <div className={`${previewBox} h-[34px] rounded-[5px] border bg-white flex items-center justify-center`} style={{ borderColor: `${color}55` }}>
                     <span className={`font-bold tracking-[.06em] ${mobile ? 'text-xs' : 'text-[13px]'}`} style={{ color }}>{chartDiff}</span>
                 </div>
             );
         }
         if (file.type === 'Audio') {
             return (
-                <div className={`${previewBox} h-[34px] rounded-[5px] bg-[rgba(34,211,238,.08)] flex items-center justify-center`}>
-                    <svg width="16" height="16" fill="#22d3ee" viewBox="0 0 24 24"><path d="M12 3v10.55A4 4 0 1 0 14 17V7h4V3h-6z" /></svg>
+                <div className={`${previewBox} h-[34px] rounded-[5px] bg-[#e8f5ee] flex items-center justify-center`}>
+                    <svg width="16" height="16" fill="#008c3c" viewBox="0 0 24 24"><path d="M12 3v10.55A4 4 0 1 0 14 17V7h4V3h-6z" /></svg>
                 </div>
             );
         }
         // Per-difficulty illustrations have no low-res variant, so they preview from their own file.
         const src = /^Illustration \((EZ|HD|IN|AT)\)$/.test(file.type) ? file.url : lowResUrl;
         return (
-            <div className={`${previewBox} h-[34px] rounded-[5px] overflow-hidden bg-[repeating-linear-gradient(135deg,#1e293b_0_4px,#172033_4px_8px)]`}>
+            <div className={`${previewBox} h-[34px] rounded-[5px] overflow-hidden border border-[#dce3dd] bg-[repeating-linear-gradient(135deg,#e8ede9_0_4px,#dfe6e1_4px_8px)]`}>
                 <img
                     src={src}
                     alt=""
@@ -152,7 +152,7 @@ export const FileTable: React.FC<FileTableProps> = ({ selectedSong, files, isLoa
 
     if (isLoading) {
         return (
-            <div className="flex items-center justify-center gap-3 text-sm text-slate-400 py-10">
+            <div className="flex items-center justify-center gap-3 text-sm text-[#4b5c53] py-10">
                 <Spinner />
                 <span>Checking for available files…</span>
             </div>
@@ -160,7 +160,7 @@ export const FileTable: React.FC<FileTableProps> = ({ selectedSong, files, isLoa
     }
 
     if (groups.length === 0) {
-        return <p className="py-10 text-center text-sm text-slate-500">No files found for this song.</p>;
+        return <p className="py-10 text-center text-sm text-[#73857b]">No files found for this song.</p>;
     }
 
     return (
@@ -173,38 +173,38 @@ export const FileTable: React.FC<FileTableProps> = ({ selectedSong, files, isLoa
             <div className={`flex flex-col ${mobile ? 'gap-6' : 'gap-7'}`}>
                 {groups.map(group => (
                     <div key={group.label} className="flex flex-col gap-2">
-                        <span className="font-mono text-[10px] font-medium tracking-[.14em] text-slate-500">{group.label}</span>
-                        <div className="flex flex-col rounded-xl border border-white/[.07] bg-white/[.02] overflow-hidden backdrop-blur-sm">
+                        <span className="font-mono text-[10px] font-semibold tracking-[.14em] text-[#4b5c53]">{group.label}</span>
+                        <div className="flex flex-col rounded-xl border border-[#dce3dd] bg-white overflow-hidden shadow-[0_2px_8px_rgba(22,32,26,0.03)]">
                             {group.items.map((file, i) => {
                                 const { label, meta } = describe(file);
                                 const isDownloadingThis = downloadingUrl === file.url;
                                 return (
                                     <div
                                         key={file.url}
-                                        className={`grid items-center ${mobile ? 'grid-cols-[56px_minmax(0,1fr)_44px] gap-3 pl-3 pr-1.5 py-2.5' : 'grid-cols-[48px_minmax(0,1fr)_36px] sm:grid-cols-[64px_minmax(0,1fr)_auto_auto_36px] gap-3 sm:gap-4 px-3 py-2.5 hover:bg-[rgba(34,211,238,.04)]'} transition-colors ${i ? 'border-t border-white/[.06]' : ''}`}
+                                        className={`grid items-center ${mobile ? 'grid-cols-[56px_minmax(0,1fr)_44px] gap-3 pl-3 pr-1.5 py-2.5' : 'grid-cols-[48px_minmax(0,1fr)_36px] sm:grid-cols-[64px_minmax(0,1fr)_auto_auto_36px] gap-3 sm:gap-4 px-3 py-2.5 hover:bg-[#f5f8f6]'} transition-colors ${i ? 'border-t border-[#e8ede9]' : ''}`}
                                         title={settings.advancedInfo ? file.url : undefined}
                                     >
                                         {renderPreview(file)}
                                         <div className="flex flex-col min-w-0">
-                                            <span className="flex items-center gap-1.5 text-sm leading-[1.3] text-slate-200">
+                                            <span className="flex items-center gap-1.5 text-sm font-medium leading-[1.3] text-[#16201a]">
                                                 {label}
                                                 {file.tooltip && (
-                                                    <span title={file.tooltip} className="text-slate-500 hover:text-[#22d3ee] cursor-help">
+                                                    <span title={file.tooltip} className="text-[#73857b] hover:text-[#008c3c] cursor-help">
                                                         <InformationCircleIcon className="w-3.5 h-3.5" />
                                                     </span>
                                                 )}
                                             </span>
-                                            <span className="font-mono text-[11px] text-slate-500 truncate">{mobile ? mobileMeta(file) : file.name}</span>
+                                            <span className="font-mono text-[11px] text-[#73857b] truncate">{mobile ? mobileMeta(file) : file.name}</span>
                                         </div>
-                                        {!mobile && <span className="hidden sm:block font-mono text-[11px] text-slate-500">{meta}</span>}
-                                        {!mobile && <span className="hidden sm:block font-mono text-[11px] text-slate-600 min-w-14 text-right">{formatBytes(file.size)}</span>}
+                                        {!mobile && <span className="hidden sm:block font-mono text-[11px] text-[#4b5c53]">{meta}</span>}
+                                        {!mobile && <span className="hidden sm:block font-mono text-[11px] text-[#73857b] min-w-14 text-right">{formatBytes(file.size)}</span>}
                                         <button
                                             type="button"
                                             onClick={() => handleDownloadClick(file)}
                                             disabled={!!downloadingUrl}
                                             aria-label={`Download ${label}`}
                                             title={`Download ${file.name}`}
-                                            className={`${mobile ? 'w-11 h-11 rounded-[10px]' : 'w-9 h-9 rounded-lg'} flex items-center justify-center text-[#22d3ee] hover:bg-[rgba(34,211,238,.12)] transition-colors disabled:cursor-not-allowed ${isDownloadingThis ? '' : 'disabled:opacity-40'}`}
+                                            className={`${mobile ? 'w-11 h-11 rounded-[10px]' : 'w-9 h-9 rounded-lg'} flex items-center justify-center text-[#008c3c] hover:bg-[#e8f5ee] transition-colors disabled:cursor-not-allowed ${isDownloadingThis ? '' : 'disabled:opacity-40'}`}
                                         >
                                             {isDownloadingThis ? <Spinner /> : <ArrowDownTrayIcon className={mobile ? 'w-[18px] h-[18px]' : 'w-[17px] h-[17px]'} />}
                                         </button>

@@ -30,26 +30,29 @@ export const AboutPopup: React.FC<AboutPopupProps> = ({ isOpen, onClose }) => {
 
     return (
         <DialogFrame onClose={onClose} labelledBy="about-title" className="w-full max-w-[680px] h-[min(660px,calc(100dvh-32px))]">
-            <div className="flex-none flex items-start justify-between gap-6 max-md:gap-4 px-6 max-md:px-5 pt-[22px] pb-5 border-b border-white/[.06]">
+            <div className="flex-none flex items-start justify-between gap-6 max-md:gap-4 px-6 max-md:px-5 pt-[22px] pb-5 border-b border-[#e8ede9]">
                 <div className="flex flex-col gap-2">
                     <Eyebrow>About the Project</Eyebrow>
-                    <h2 id="about-title" className="text-[21px] font-semibold leading-[1.25] text-slate-100">Phigros Chart Downloader</h2>
-                    <p className="text-sm leading-[1.6] text-slate-400 text-pretty">{projectDescription}</p>
+                    <h2 id="about-title" className="text-[21px] font-semibold leading-[1.25] text-[#16201a]">Phigros Chart Downloader</h2>
+                    <p className="text-sm leading-[1.6] text-[#4b5c53] text-pretty">{projectDescription}</p>
+                    <span className="self-start inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-[#e8f5ee] border border-[#008c3c]/20 font-mono text-[11px] font-semibold text-[#008c3c]">
+                        Developed by JackZhang
+                    </span>
                 </div>
                 <CloseButton onClick={onClose} />
             </div>
 
             <div className="flex-1 min-h-0 overflow-y-auto thin-scroll px-6 max-md:px-5 py-5 flex flex-col gap-5">
                 {latest && (
-                    <div className="rounded-xl border border-[rgba(34,211,238,.22)] bg-[rgba(34,211,238,.04)] px-[18px] py-4 flex flex-col gap-2.5">
+                    <div className="rounded-xl border border-[#008c3c]/25 bg-[#e8f5ee]/70 px-[18px] py-4 flex flex-col gap-2.5">
                         <div className="flex items-center gap-2.5">
-                            <span className="font-mono text-[10px] font-semibold tracking-[.12em] text-[#06141a] bg-[#22d3ee] px-[7px] py-[3px] rounded">LATEST</span>
-                            <span className="font-mono text-[13px] font-medium text-slate-200">{latest.date}</span>
+                            <span className="font-mono text-[10px] font-semibold tracking-[.12em] text-white bg-[#008c3c] px-[7px] py-[3px] rounded">LATEST</span>
+                            <span className="font-mono text-[13px] font-semibold text-[#16201a]">{latest.date}</span>
                         </div>
                         <ul className="flex flex-col gap-1.5">
                             {latest.items.map(item => (
-                                <li key={item} className="flex gap-2.5 text-sm leading-[1.5] text-slate-300">
-                                    <span className="text-[#22d3ee]">—</span><span>{item}</span>
+                                <li key={item} className="flex gap-2.5 text-sm leading-[1.5] text-[#16201a]">
+                                    <span className="text-[#008c3c] font-bold">—</span><span>{item}</span>
                                 </li>
                             ))}
                         </ul>
@@ -58,11 +61,11 @@ export const AboutPopup: React.FC<AboutPopupProps> = ({ isOpen, onClose }) => {
 
                 {history.length > 0 && (
                     <div className="flex flex-col">
-                        <span className="font-mono text-[10px] font-medium tracking-[.14em] text-slate-500 pb-2">VERSION HISTORY</span>
+                        <span className="font-mono text-[10px] font-semibold tracking-[.14em] text-[#73857b] pb-2">VERSION HISTORY</span>
                         {history.map((log, i) => {
                             const isOpenItem = openIndex === i;
                             return (
-                                <div key={log.date} className="border-t border-white/[.06]">
+                                <div key={log.date} className="border-t border-[#e8ede9]">
                                     <button
                                         type="button"
                                         onClick={() => setOpenIndex(isOpenItem ? -1 : i)}
@@ -70,16 +73,16 @@ export const AboutPopup: React.FC<AboutPopupProps> = ({ isOpen, onClose }) => {
                                         className="w-full h-[46px] flex items-center justify-between group"
                                     >
                                         <span className="flex items-center gap-3">
-                                            <span className={`font-mono text-[13px] font-medium ${isOpenItem ? 'text-slate-100' : 'text-slate-300 group-hover:text-white'}`}>{log.date}</span>
-                                            <span className="text-xs text-slate-600">{log.items.length} {log.items.length === 1 ? 'change' : 'changes'}</span>
+                                            <span className={`font-mono text-[13px] font-medium ${isOpenItem ? 'text-[#008c3c]' : 'text-[#16201a] group-hover:text-[#008c3c]'}`}>{log.date}</span>
+                                            <span className="text-xs text-[#73857b]">{log.items.length} {log.items.length === 1 ? 'change' : 'changes'}</span>
                                         </span>
-                                        <ChevronDownIcon className={`w-3.5 h-3.5 text-slate-500 transition-transform duration-200 ${isOpenItem ? 'rotate-180' : ''}`} />
+                                        <ChevronDownIcon className={`w-3.5 h-3.5 text-[#73857b] transition-transform duration-200 ${isOpenItem ? 'rotate-180' : ''}`} />
                                     </button>
                                     {isOpenItem && (
                                         <ul className="pb-3.5 flex flex-col gap-1.5">
                                             {log.items.map(item => (
-                                                <li key={item} className="flex gap-2.5 text-[13px] leading-[1.5] text-slate-400">
-                                                    <span className="text-slate-600">—</span><span>{item}</span>
+                                                <li key={item} className="flex gap-2.5 text-[13px] leading-[1.5] text-[#4b5c53]">
+                                                    <span className="text-[#8b9a91]">—</span><span>{item}</span>
                                                 </li>
                                             ))}
                                         </ul>
@@ -92,8 +95,8 @@ export const AboutPopup: React.FC<AboutPopupProps> = ({ isOpen, onClose }) => {
             </div>
 
             <DialogFooter>
-                <span className="text-[13px] text-slate-500">
-                    More information available on <a href={REPO_URL} target="_blank" rel="noreferrer" className="text-[#22d3ee] hover:text-[#67e8f9]">GitHub</a>.
+                <span className="text-[13px] text-[#4b5c53]">
+                    Developed by <b className="text-[#16201a]">JackZhang</b> · Source on <a href={REPO_URL} target="_blank" rel="noreferrer" className="text-[#008c3c] font-medium hover:underline">GitHub</a>.
                 </span>
                 <Button variant="outline" size="md" onClick={onClose}>Close</Button>
             </DialogFooter>

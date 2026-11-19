@@ -30,10 +30,10 @@ export const PatchedChartPopup: React.FC<PatchedChartPopupProps> = ({ isOpen, on
                 </>
             }
         >
-            {reason && <p className="text-[13px] leading-[1.6] text-slate-400 text-pretty">{reason}</p>}
+            {reason && <p className="text-[13px] leading-[1.6] text-[#4b5c53] text-pretty">{reason}</p>}
             {songName && (
-                <div className="flex items-center gap-2 px-2.5 py-2 rounded-lg bg-white/[.03] font-mono text-[11px] font-medium text-slate-500">
-                    <span className="text-slate-300 truncate">{songName}</span>
+                <div className="flex items-center gap-2 px-2.5 py-2 rounded-lg bg-[#f3f5f3] border border-[#dce3dd] font-mono text-[11px] font-medium text-[#73857b]">
+                    <span className="text-[#16201a] truncate">{songName}</span>
                     {difficulty && (
                         <>
                             <span>·</span>

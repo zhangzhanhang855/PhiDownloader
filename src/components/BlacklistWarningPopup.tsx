@@ -26,12 +26,12 @@ export const BlacklistWarningPopup: React.FC<BlacklistWarningPopupProps> = ({ is
             }
         >
             {reason && (
-                <div className="flex flex-col gap-1 px-3 py-2.5 rounded-lg bg-[rgba(251,191,36,.05)] border border-[rgba(251,191,36,.15)]">
-                    <span className="font-mono text-[10px] font-medium tracking-[.12em] text-[#a16207]">REASON</span>
-                    <span className="text-[13px] leading-[1.55] text-slate-200">{reason}</span>
+                <div className="flex flex-col gap-1 px-3 py-2.5 rounded-lg bg-[#fef3c7]/60 border border-[#f59e0b]/30">
+                    <span className="font-mono text-[10px] font-semibold tracking-[.12em] text-[#b45309]">REASON</span>
+                    <span className="text-[13px] leading-[1.55] text-[#16201a]">{reason}</span>
                 </div>
             )}
-            <p className="text-[13px] text-slate-400">Proceed with the download anyway?</p>
+            <p className="text-[13px] text-[#4b5c53]">Proceed with the download anyway?</p>
         </NoticeDialog>
     );
 };

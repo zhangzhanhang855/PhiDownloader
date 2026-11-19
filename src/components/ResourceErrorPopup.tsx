@@ -37,12 +37,12 @@ export const ResourceErrorPopup: React.FC<ResourceErrorPopupProps> = ({ onSwitch
                 </>
             }
         >
-            <p className="text-[13px] leading-[1.6] text-slate-400 text-pretty">
-                <span className="text-slate-200">{resourceError.message}</span>{' '}
+            <p className="text-[13px] leading-[1.6] text-[#4b5c53] text-pretty">
+                <span className="text-[#16201a] font-medium">{resourceError.message}</span>{' '}
                 GitHub is either unreachable in your region, or the current proxy is down. Switch proxy or retry.
             </p>
             {resourceError.detail && (
-                <span className="font-mono text-[11px] leading-[1.5] text-slate-500 px-2.5 py-2 rounded-lg bg-white/[.03] break-all">
+                <span className="font-mono text-[11px] leading-[1.5] text-[#73857b] px-2.5 py-2 rounded-lg bg-[#f3f5f3] border border-[#dce3dd] break-all">
                     {resourceError.detail}
                 </span>
             )}

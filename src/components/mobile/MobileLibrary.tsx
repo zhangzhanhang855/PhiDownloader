@@ -27,7 +27,7 @@ const SongThumbnail: React.FC<{ src: string }> = ({ src }) => {
     const [loaded, setLoaded] = useState(false);
     const [failed, setFailed] = useState(false);
     return (
-        <span className="relative w-16 h-9 flex-none rounded-md overflow-hidden bg-[repeating-linear-gradient(135deg,#1e293b_0_4px,#172033_4px_8px)]">
+        <span className="relative w-16 h-9 flex-none rounded-md overflow-hidden border border-[#dce3dd] bg-[repeating-linear-gradient(135deg,#e8ede9_0_4px,#dfe6e1_4px_8px)]">
             {!failed && (
                 <img
                     src={src}
@@ -75,7 +75,7 @@ export const MobileLibrary: React.FC<MobileLibraryProps> = ({
     const renderList = () => {
         if (isLoading) {
             return (
-                <div className="flex items-center justify-center gap-3 py-12 text-sm text-slate-400">
+                <div className="flex items-center justify-center gap-3 py-12 text-sm text-[#4b5c53]">
                     <Spinner />
                     <span>Loading song list…</span>
                 </div>
@@ -84,13 +84,13 @@ export const MobileLibrary: React.FC<MobileLibraryProps> = ({
         if (error) {
             return (
                 <div className="flex flex-col items-center gap-2 text-center px-6 py-12">
-                    <span className="flex items-center gap-2 text-[#f87171] text-sm font-semibold"><ErrorIcon className="w-5 h-5" />Failed to load songs</span>
-                    <p className="font-mono text-[11px] text-slate-500 break-all">{error}</p>
+                    <span className="flex items-center gap-2 text-[#dc2626] text-sm font-semibold"><ErrorIcon className="w-5 h-5" />Failed to load songs</span>
+                    <p className="font-mono text-[11px] text-[#73857b] break-all">{error}</p>
                 </div>
             );
         }
         if (displayedSongs.length === 0) {
-            return <p className="px-4 py-12 text-center text-sm text-slate-500">No songs found.</p>;
+            return <p className="px-4 py-12 text-center text-sm text-[#73857b]">No songs found.</p>;
         }
         return (
             <div style={{ height: `${rowVirtualizer.getTotalSize()}px`, position: 'relative' }}>
@@ -104,13 +104,13 @@ export const MobileLibrary: React.FC<MobileLibraryProps> = ({
                             role="option"
                             aria-selected={selected}
                             onClick={() => onOpenSong(song)}
-                            className={`absolute left-0 top-0 w-full h-[60px] flex items-center gap-3 px-2.5 rounded-[10px] text-left ${selected ? 'bg-[rgba(34,211,238,0.10)]' : 'active:bg-white/[.04]'}`}
+                            className={`absolute left-0 top-0 w-full h-[60px] flex items-center gap-3 px-2.5 rounded-[10px] text-left ${selected ? 'bg-[#e8f5ee] border-l-[3px] border-[#008c3c]' : 'active:bg-[#eef2ee] border-l-[3px] border-transparent'}`}
                             style={{ transform: `translateY(${virtualItem.start}px)` }}
                         >
                             <SongThumbnail src={getBlurIllustrationUrl(settings.proxySource, song.id)} />
                             <span className="flex-1 min-w-0 flex flex-col gap-px">
-                                <span className={`text-[15px] leading-[1.25] truncate ${selected ? 'text-white' : 'text-slate-300'}`}>{song.name}</span>
-                                <span className="text-xs leading-[1.3] text-slate-500 truncate">{song.composer}</span>
+                                <span className={`text-[15px] leading-[1.25] truncate ${selected ? 'text-[#006b2e] font-semibold' : 'text-[#16201a] font-medium'}`}>{song.name}</span>
+                                <span className="text-xs leading-[1.3] text-[#73857b] truncate">{song.composer}</span>
                             </span>
                         </button>
                     );
@@ -120,20 +120,21 @@ export const MobileLibrary: React.FC<MobileLibraryProps> = ({
     };
 
     return (
-        <div className="absolute inset-0 flex flex-col bg-[#0d1118]">
-            <div className="flex-none bg-[#090c11] border-b border-white/[.1]">
-                <header className="h-[52px] flex items-center justify-between gap-3 pl-[18px] pr-2">
+        <div className="absolute inset-0 flex flex-col bg-white">
+            <div className="relative flex-none bg-[#f8faf8] border-b border-[#dce3dd]">
+                <div className="absolute inset-x-0 top-0 h-[3px] bg-[#008c3c]" aria-hidden="true" />
+                <header className="h-[52px] flex items-center justify-between gap-3 pl-[18px] pr-2 pt-0.5">
                     <div className="flex items-center gap-2.5 min-w-0">
-                        <span className="w-4 h-4 flex-none bg-[#22d3ee] -skew-x-[14deg]" aria-hidden="true" />
-                        <h1 className="font-semibold text-[13px] tracking-[.16em] text-slate-100 truncate">PHIGROS CHART DOWNLOADER</h1>
+                        <span className="inline-flex items-center justify-center px-1.5 py-0.5 rounded bg-[#008c3c] font-mono text-[10px] font-bold tracking-wider text-white flex-none" aria-hidden="true">JR</span>
+                        <h1 className="font-bold text-[13px] tracking-[.14em] text-[#16201a] truncate">PHIGROS CHART DOWNLOADER</h1>
                     </div>
                     <button
                         type="button"
                         onClick={onOpenMenu}
                         aria-label="Menu"
-                        className="w-11 h-11 flex-none flex items-center justify-center rounded-xl text-slate-300 active:bg-white/[.05]"
+                        className="w-11 h-11 flex-none flex items-center justify-center rounded-xl text-[#4b5c53] active:bg-[#eef2ee]"
                     >
-                        <svg width="22" height="22" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" /></svg>
+                        <svg width="22" height="22" fill="none" viewBox="0 0 24 24" strokeWidth={1.6} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" /></svg>
                     </button>
                 </header>
 
@@ -143,7 +144,7 @@ export const MobileLibrary: React.FC<MobileLibraryProps> = ({
                             type="button"
                             aria-pressed={onlyHasAt}
                             onClick={() => setOnlyHasAt(v => !v)}
-                            className={`${chip} gap-1.5 px-3 font-mono text-xs font-semibold ${onlyHasAt ? 'border-[rgba(74,222,128,.35)] bg-[rgba(74,222,128,.12)] text-[#4ade80]' : 'border-white/[.08] text-slate-200'}`}
+                            className={`${chip} gap-1.5 px-3 font-mono text-xs font-semibold ${onlyHasAt ? 'border-[#008c3c]/40 bg-[#e8f5ee] text-[#008c3c]' : 'border-[#dce3dd] bg-white text-[#4b5c53]'}`}
                         >
                             Has AT
                         </button>
@@ -151,7 +152,7 @@ export const MobileLibrary: React.FC<MobileLibraryProps> = ({
                             type="button"
                             onClick={onOpenRange}
                             aria-label={`Difficulty range ${rangeLabel}`}
-                            className={`${chip} gap-1 pl-3 pr-2.5 font-mono text-xs font-medium ${isRangeActive ? 'border-[rgba(34,211,238,.4)] bg-[rgba(34,211,238,.1)] text-[#22d3ee]' : 'border-white/[.08] text-slate-400'}`}
+                            className={`${chip} gap-1 pl-3 pr-2.5 font-mono text-xs font-medium ${isRangeActive ? 'border-[#008c3c]/40 bg-[#e8f5ee] text-[#008c3c]' : 'border-[#dce3dd] bg-white text-[#4b5c53]'}`}
                         >
                             Lv {rangeLabel}
                             <ChevronDownIcon className="w-3 h-3 [stroke-width:2]" />
@@ -160,14 +161,14 @@ export const MobileLibrary: React.FC<MobileLibraryProps> = ({
                             type="button"
                             onClick={cycleSort}
                             aria-label={`Sort order: ${SORT_CYCLE[sortIndex].label}`}
-                            className={`${chip} gap-[5px] px-3 border-white/[.08] text-xs font-medium text-slate-400`}
+                            className={`${chip} gap-[5px] px-3 border-[#dce3dd] bg-white text-xs font-medium text-[#4b5c53]`}
                         >
                             {SORT_CYCLE[sortIndex].label}
                             <svg width="12" height="12" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M3 7.5L7.5 3m0 0L12 7.5M7.5 3v13.5m13.5 0L16.5 21m0 0L12 16.5m4.5 4.5V7.5" /></svg>
                         </button>
                         <span className="flex-1" />
-                        <span className="flex-none font-mono text-[10px] font-medium tracking-[.12em] text-slate-600 whitespace-nowrap">
-                            {isSuggestion && <span className="text-[#22d3ee]">DID YOU MEAN · </span>}
+                        <span className="flex-none font-mono text-[10px] font-medium tracking-[.12em] text-[#73857b] whitespace-nowrap">
+                            {isSuggestion && <span className="text-[#008c3c]">DID YOU MEAN · </span>}
                             {isLoading ? '—' : `${displayedSongs.length} SONGS`}
                         </span>
                     </div>
@@ -178,13 +179,13 @@ export const MobileLibrary: React.FC<MobileLibraryProps> = ({
                 <div className="flex-1 min-h-0">{bulkPanel}</div>
             ) : (
                 <>
-                    <div ref={parentRef} role="listbox" aria-label="Songs" className="flex-1 min-h-0 overflow-y-auto px-2 pt-1.5 pb-6">
+                    <div ref={parentRef} role="listbox" aria-label="Songs" className="flex-1 min-h-0 overflow-y-auto px-2 pt-1.5 pb-6 bg-white">
                         {renderList()}
                     </div>
 
-                    <div className="flex-none px-4 pt-2.5 pb-[calc(16px+env(safe-area-inset-bottom))] bg-[#05070a] border-t border-white/[.1]">
-                        <label className="h-12 flex items-center gap-2.5 px-3.5 rounded-[14px] bg-white/[.05] border border-white/[.08] focus-within:border-[rgba(34,211,238,.45)] transition-colors">
-                            <MagnifyingGlassIcon className="w-[18px] h-[18px] flex-none text-slate-500" />
+                    <div className="flex-none px-4 pt-2.5 pb-[calc(16px+env(safe-area-inset-bottom))] bg-[#f8faf8] border-t border-[#dce3dd]">
+                        <label className="h-12 flex items-center gap-2.5 px-3.5 rounded-[14px] bg-white border border-[#dce3dd] focus-within:border-[#008c3c] focus-within:ring-2 focus-within:ring-[#008c3c]/15 transition-all">
+                            <MagnifyingGlassIcon className="w-[18px] h-[18px] flex-none text-[#73857b]" />
                             <input
                                 type="text"
                                 enterKeyHint="search"
@@ -198,14 +199,14 @@ export const MobileLibrary: React.FC<MobileLibraryProps> = ({
                                 }}
                                 placeholder="Search songs or artists"
                                 aria-label="Search songs, artists or aliases"
-                                className="flex-1 min-w-0 bg-transparent text-base text-slate-200 placeholder:text-slate-500 focus:outline-none"
+                                className="flex-1 min-w-0 bg-transparent text-base text-[#16201a] placeholder:text-[#8b9a91] focus:outline-none"
                             />
                             {searchTerm && (
                                 <button
                                     type="button"
                                     onClick={() => setSearchTerm('')}
                                     aria-label="Clear search"
-                                    className="w-8 h-8 -mr-1.5 flex-none flex items-center justify-center text-slate-500"
+                                    className="w-8 h-8 -mr-1.5 flex-none flex items-center justify-center text-[#73857b]"
                                 >
                                     <svg width="16" height="16" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
                                 </button>
