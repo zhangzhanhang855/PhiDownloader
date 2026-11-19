@@ -16,7 +16,6 @@ interface FileTableProps {
     files: FileInfo[];
     isLoading: boolean;
     onDownloaded: (fileName: string) => void;
-    /** Larger previews and touch targets for the phone layout. */
     variant?: 'default' | 'mobile';
 }
 
@@ -46,14 +45,12 @@ export const FileTable: React.FC<FileTableProps> = ({ selectedSong, files, isLoa
     const [pendingDownload, setPendingDownload] = useState<FileInfo | null>(null);
 
     const executeDownload = useCallback(async (file: FileInfo) => {
-        if (downloadingUrl) return; // Prevent multiple concurrent downloads
+        if (downloadingUrl) return;
         const downloadName = getDownloadName(file, selectedSong);
         setDownloadingUrl(file.url);
         try {
             const response = await resourceFetch(file.url, { referrerPolicy: 'no-referrer' });
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
+            if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
             const blob = await response.blob();
             const blobUrl = window.URL.createObjectURL(blob);
 
@@ -80,7 +77,6 @@ export const FileTable: React.FC<FileTableProps> = ({ selectedSong, files, isLoa
     }, [downloadingUrl, selectedSong, settings.analyticsEnabled, reportResourceError, onDownloaded]);
 
     const handleDownloadClick = (file: FileInfo) => {
-        // Charts are raw .json files; explain that once before the first download.
         if (file.type.startsWith('Chart') && !localStorage.getItem(ASSET_WARNING_KEY)) {
             setPendingDownload(file);
             return;
@@ -102,22 +98,21 @@ export const FileTable: React.FC<FileTableProps> = ({ selectedSong, files, isLoa
         if (chartDiff) {
             const color = getDifficultyColor(chartDiff);
             return (
-                <div className={`${previewBox} h-[34px] rounded-[5px] border bg-white flex items-center justify-center`} style={{ borderColor: `${color}55` }}>
-                    <span className={`font-bold tracking-[.06em] ${mobile ? 'text-xs' : 'text-[13px]'}`} style={{ color }}>{chartDiff}</span>
+                <div className={`${previewBox} h-[34px] rounded-md border bg-[#fafbfa] flex items-center justify-center`} style={{ borderColor: `${color}55` }}>
+                    <span className={`font-mono font-bold tracking-[.06em] ${mobile ? 'text-xs' : 'text-[13px]'}`} style={{ color }}>{chartDiff}</span>
                 </div>
             );
         }
         if (file.type === 'Audio') {
             return (
-                <div className={`${previewBox} h-[34px] rounded-[5px] bg-[#e8f5ee] flex items-center justify-center`}>
+                <div className={`${previewBox} h-[34px] rounded-md bg-[#e9f5ee] border border-[#008c3c]/20 flex items-center justify-center`}>
                     <svg width="16" height="16" fill="#008c3c" viewBox="0 0 24 24"><path d="M12 3v10.55A4 4 0 1 0 14 17V7h4V3h-6z" /></svg>
                 </div>
             );
         }
-        // Per-difficulty illustrations have no low-res variant, so they preview from their own file.
         const src = /^Illustration \((EZ|HD|IN|AT)\)$/.test(file.type) ? file.url : lowResUrl;
         return (
-            <div className={`${previewBox} h-[34px] rounded-[5px] overflow-hidden border border-[#dce3dd] bg-[repeating-linear-gradient(135deg,#e8ede9_0_4px,#dfe6e1_4px_8px)]`}>
+            <div className={`${previewBox} h-[34px] rounded-md overflow-hidden border border-[#d7e0d9] bg-[repeating-linear-gradient(135deg,#e9eee9_0_4px,#dfe6e1_4px_8px)]`}>
                 <img
                     src={src}
                     alt=""
@@ -137,7 +132,6 @@ export const FileTable: React.FC<FileTableProps> = ({ selectedSong, files, isLoa
         return { label: file.type, meta: RESOLUTIONS[file.type] ?? 'PNG' };
     };
 
-    // Phones have no room for the meta/size columns, so the second line carries the format instead.
     const mobileMeta = (file: FileInfo): string => {
         if (getChartDifficulty(file)) return `JSON · ${file.name}`;
         if (file.type === 'Audio') return `OGG · ${file.name}`;
@@ -154,7 +148,7 @@ export const FileTable: React.FC<FileTableProps> = ({ selectedSong, files, isLoa
         return (
             <div className="flex items-center justify-center gap-3 text-sm text-[#4b5c53] py-10">
                 <Spinner />
-                <span>Checking for available files…</span>
+                <span>Checking manifest…</span>
             </div>
         );
     }
@@ -170,23 +164,26 @@ export const FileTable: React.FC<FileTableProps> = ({ selectedSong, files, isLoa
                 onConfirm={handleWarningConfirm}
                 onCancel={() => setPendingDownload(null)}
             />
-            <div className={`flex flex-col ${mobile ? 'gap-6' : 'gap-7'}`}>
+            <div className={`flex flex-col ${mobile ? 'gap-5' : 'gap-6'}`}>
                 {groups.map(group => (
                     <div key={group.label} className="flex flex-col gap-2">
-                        <span className="font-mono text-[10px] font-semibold tracking-[.14em] text-[#4b5c53]">{group.label}</span>
-                        <div className="flex flex-col rounded-xl border border-[#dce3dd] bg-white overflow-hidden shadow-[0_2px_8px_rgba(22,32,26,0.03)]">
+                        <div className="flex items-center justify-between px-1">
+                            <span className="font-mono text-[10px] font-semibold tracking-[.14em] text-[#4b5c53]">{group.label}</span>
+                            <span className="font-mono text-[10px] text-[#73857b]">{group.items.length} ITEMS</span>
+                        </div>
+                        <div className="flex flex-col rounded-xl border border-[#d7e0d9] bg-white overflow-hidden shadow-[0_2px_8px_rgba(18,28,22,0.03)]">
                             {group.items.map((file, i) => {
                                 const { label, meta } = describe(file);
                                 const isDownloadingThis = downloadingUrl === file.url;
                                 return (
                                     <div
                                         key={file.url}
-                                        className={`grid items-center ${mobile ? 'grid-cols-[56px_minmax(0,1fr)_44px] gap-3 pl-3 pr-1.5 py-2.5' : 'grid-cols-[48px_minmax(0,1fr)_36px] sm:grid-cols-[64px_minmax(0,1fr)_auto_auto_36px] gap-3 sm:gap-4 px-3 py-2.5 hover:bg-[#f5f8f6]'} transition-colors ${i ? 'border-t border-[#e8ede9]' : ''}`}
+                                        className={`grid items-center ${mobile ? 'grid-cols-[56px_minmax(0,1fr)_44px] gap-3 pl-3 pr-1.5 py-2.5' : 'grid-cols-[48px_minmax(0,1fr)_36px] sm:grid-cols-[64px_minmax(0,1fr)_auto_auto_36px] gap-3 sm:gap-4 px-3.5 py-2.5 hover:bg-[#f4f6f4]'} transition-colors ${i ? 'border-t border-[#e6ece7]' : ''}`}
                                         title={settings.advancedInfo ? file.url : undefined}
                                     >
                                         {renderPreview(file)}
                                         <div className="flex flex-col min-w-0">
-                                            <span className="flex items-center gap-1.5 text-sm font-medium leading-[1.3] text-[#16201a]">
+                                            <span className="flex items-center gap-1.5 text-sm font-semibold leading-[1.3] text-[#16201a]">
                                                 {label}
                                                 {file.tooltip && (
                                                     <span title={file.tooltip} className="text-[#73857b] hover:text-[#008c3c] cursor-help">
@@ -196,15 +193,15 @@ export const FileTable: React.FC<FileTableProps> = ({ selectedSong, files, isLoa
                                             </span>
                                             <span className="font-mono text-[11px] text-[#73857b] truncate">{mobile ? mobileMeta(file) : file.name}</span>
                                         </div>
-                                        {!mobile && <span className="hidden sm:block font-mono text-[11px] text-[#4b5c53]">{meta}</span>}
-                                        {!mobile && <span className="hidden sm:block font-mono text-[11px] text-[#73857b] min-w-14 text-right">{formatBytes(file.size)}</span>}
+                                        {!mobile && <span className="hidden sm:block font-mono text-[11px] font-medium text-[#4b5c53]">{meta}</span>}
+                                        {!mobile && <span className="hidden sm:block font-mono text-[11px] text-[#73857b] min-w-14 text-right tabular-nums">{formatBytes(file.size)}</span>}
                                         <button
                                             type="button"
                                             onClick={() => handleDownloadClick(file)}
                                             disabled={!!downloadingUrl}
                                             aria-label={`Download ${label}`}
                                             title={`Download ${file.name}`}
-                                            className={`${mobile ? 'w-11 h-11 rounded-[10px]' : 'w-9 h-9 rounded-lg'} flex items-center justify-center text-[#008c3c] hover:bg-[#e8f5ee] transition-colors disabled:cursor-not-allowed ${isDownloadingThis ? '' : 'disabled:opacity-40'}`}
+                                            className={`${mobile ? 'w-11 h-11 rounded-[10px]' : 'w-9 h-9 rounded-lg'} flex items-center justify-center text-[#008c3c] hover:bg-[#e9f5ee] transition-colors disabled:cursor-not-allowed ${isDownloadingThis ? '' : 'disabled:opacity-40'}`}
                                         >
                                             {isDownloadingThis ? <Spinner /> : <ArrowDownTrayIcon className={mobile ? 'w-[18px] h-[18px]' : 'w-[17px] h-[17px]'} />}
                                         </button>

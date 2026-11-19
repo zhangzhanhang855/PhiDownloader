@@ -1,9 +1,8 @@
 import React from 'react';
-import { Song } from '../types';
+import { Song, FileInfo } from '../types';
 import { getExtraChart, getExtraCharts } from '../extraCharts';
 import { DIFFICULTY_ORDER, getDifficultyColor } from '../utils/difficulty';
 import { useSettings } from '../contexts/SettingsContext';
-import { FileInfo } from '../types';
 import { estimateExportZipSize, formatEstimate } from '../utils/exportEstimate';
 
 interface DifficultySelectorProps {
@@ -21,13 +20,15 @@ export const DifficultySelector: React.FC<DifficultySelectorProps> = ({ difficul
         return null;
     }
 
-    // Always show the four standard slots (a missing chart is disabled), plus any extra charts such as SP.
     const slots = [...DIFFICULTY_ORDER, ...getExtraCharts(selectedSong.id).map(e => e.difficulty)];
 
     return (
         <div className="flex flex-col gap-2.5">
-            <span className="font-mono text-[10px] font-semibold tracking-[.14em] text-[#4b5c53]">AVAILABLE DIFFICULTIES</span>
-            <div className={`grid grid-cols-2 ${slots.length > 4 ? 'sm:grid-cols-5' : 'sm:grid-cols-4'} gap-2.5`} role="radiogroup" aria-label="Difficulty">
+            <div className="flex items-center justify-between">
+                <span className="font-mono text-[10px] font-semibold tracking-[.14em] text-[#4b5c53]">SELECT CLASS / DIFFICULTY</span>
+                <span className="font-mono text-[10px] text-[#73857b]">{difficulties.length} AVAILABLE</span>
+            </div>
+            <div className={`grid grid-cols-2 ${slots.length > 4 ? 'sm:grid-cols-5' : 'sm:grid-cols-4'} gap-3`} role="radiogroup" aria-label="Difficulty">
                 {slots.map(diff => {
                     const available = difficulties.includes(diff);
                     const selected = available && diff === selectedDifficulty;
@@ -38,6 +39,7 @@ export const DifficultySelector: React.FC<DifficultySelectorProps> = ({ difficul
                     const charter = selectedSong.charters[key];
                     const tooltip = [extra?.tooltip, settings.advancedInfo && charter ? `Charter: ${charter}` : null].filter(Boolean).join('\n');
                     const estimate = available ? estimateExportZipSize(files, diff, settings.exportIllustrationType) : null;
+
                     return (
                         <button
                             key={diff}
@@ -47,17 +49,28 @@ export const DifficultySelector: React.FC<DifficultySelectorProps> = ({ difficul
                             disabled={!available}
                             onClick={() => onSelectDifficulty(diff)}
                             title={tooltip || undefined}
-                            className={`px-4 py-3.5 rounded-[10px] border backdrop-blur-sm flex flex-wrap items-baseline justify-between transition-all disabled:opacity-40 disabled:cursor-not-allowed ${
+                            className={`relative overflow-hidden px-4 py-3.5 rounded-xl border text-left transition-all disabled:opacity-40 disabled:cursor-not-allowed ${
                                 selected
-                                    ? 'bg-white border-[#008c3c] ring-2 ring-[#008c3c]/20 shadow-[0_4px_14px_rgba(0,140,60,0.10)]'
-                                    : 'bg-white/85 border-[#dce3dd] hover:bg-white hover:border-[#b7c5ba]'
+                                    ? 'bg-white border-[#008c3c] ring-2 ring-[#008c3c]/20 shadow-[0_6px_18px_rgba(0,140,60,0.12)]'
+                                    : 'bg-white border-[#d7e0d9] hover:border-[#9eb3a5] hover:shadow-xs'
                             }`}
                         >
-                            <span className="font-bold text-[15px] tracking-[.08em]" style={{ color }}>{diff}</span>
-                            <span className={`text-[26px] font-semibold leading-none ${selected ? 'text-[#16201a]' : 'text-[#4b5c53]'}`}>{available ? (level ?? '?') : 'N/A'}</span>
-                            {estimate !== null && (
-                                <span className="basis-full mt-1.5 font-mono text-[11px] text-[#73857b] text-left" title="Estimated size of the exported .zip (chart + illustration + audio)">{formatEstimate(estimate)}</span>
-                            )}
+                            {/* JR Line Color Strip at top of each ticket card */}
+                            <div className="absolute inset-x-0 top-0 h-1" style={{ backgroundColor: available ? color : '#cbd5ce' }} />
+                            <div className="flex items-baseline justify-between gap-2 pt-0.5">
+                                <span className="font-mono font-bold text-sm tracking-[.08em]" style={{ color }}>{diff}</span>
+                                <span className={`text-[26px] font-bold leading-none tabular-nums ${selected ? 'text-[#16201a]' : 'text-[#4b5c53]'}`}>
+                                    {available ? (level ?? '?') : '—'}
+                                </span>
+                            </div>
+                            <div className="mt-2 flex items-center justify-between">
+                                <span className="font-mono text-[11px] text-[#73857b]">
+                                    {estimate !== null ? formatEstimate(estimate) : 'Unavailable'}
+                                </span>
+                                {selected && (
+                                    <span className="w-2 h-2 rounded-full bg-[#008c3c]" aria-hidden="true" />
+                                )}
+                            </div>
                         </button>
                     );
                 })}

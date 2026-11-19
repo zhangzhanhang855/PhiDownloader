@@ -8,25 +8,18 @@ type WebkitAudioWindow = Window & typeof globalThis & {
 
 interface AudioPlayerControlProps {
     audio: HTMLAudioElement;
-    /** Full-width pill with larger touch targets, used by the phone layout. */
     variant?: 'default' | 'mobile';
 }
 
 const isIosBrowser = () => {
     if (typeof window === 'undefined') return false;
-
     const userAgent = window.navigator.userAgent;
     const platform = window.navigator.platform;
     const maxTouchPoints = window.navigator.maxTouchPoints || 0;
-
     return /iPad|iPhone|iPod/.test(userAgent) || (platform === 'MacIntel' && maxTouchPoints > 1);
 };
 
-const getLastRangeEnd = (ranges: TimeRanges) => {
-    if (ranges.length === 0) return 0;
-
-    return ranges.end(ranges.length - 1);
-};
+const getLastRangeEnd = (ranges: TimeRanges) => (ranges.length === 0 ? 0 : ranges.end(ranges.length - 1));
 
 const isValidDuration = (duration: number | undefined) => (
     typeof duration === 'number' && Number.isFinite(duration) && duration > 0
@@ -34,10 +27,7 @@ const isValidDuration = (duration: number | undefined) => (
 
 const decodeAudioDuration = async (src: string, signal: AbortSignal) => {
     const response = await resourceFetch(src, { cache: 'force-cache', signal });
-    if (!response.ok) {
-        throw new Error(`Audio duration probe failed with ${response.status}`);
-    }
-
+    if (!response.ok) throw new Error(`Audio duration probe failed with ${response.status}`);
     const encodedAudio = await response.arrayBuffer();
     if (signal.aborted) return null;
 
@@ -45,15 +35,11 @@ const decodeAudioDuration = async (src: string, signal: AbortSignal) => {
     if (!AudioContextConstructor) return null;
 
     const context = new AudioContextConstructor();
-
     try {
         const decodedAudio = await new Promise<AudioBuffer>((resolve, reject) => {
             const decodeResult = context.decodeAudioData(encodedAudio.slice(0), resolve, reject);
-            if (decodeResult) {
-                decodeResult.then(resolve, reject);
-            }
+            if (decodeResult) decodeResult.then(resolve, reject);
         });
-
         return decodedAudio.duration;
     } finally {
         void context.close().catch(() => undefined);
@@ -74,83 +60,52 @@ export const AudioPlayerControl: React.FC<AudioPlayerControlProps> = ({ audio, v
     useEffect(() => {
         setDecodedDuration(null);
         setIsFullyLoaded(false);
-
         if (!isIosBrowser() || !audio.src) return;
 
         const abortController = new AbortController();
-
         decodeAudioDuration(audio.src, abortController.signal)
             .then(decoded => {
                 if (abortController.signal.aborted || !isValidDuration(decoded ?? undefined)) return;
-
                 setDecodedDuration(decoded);
                 setDuration(decoded);
                 setIsFullyLoaded(true);
             })
             .catch(error => {
-                if (!abortController.signal.aborted) {
-                    console.warn("Could not decode audio duration:", error);
-                }
+                if (!abortController.signal.aborted) console.warn("Could not decode audio duration:", error);
             });
 
-        return () => {
-            abortController.abort();
-        };
+        return () => abortController.abort();
     }, [audio]);
 
     useEffect(() => {
         const getNormalizedDuration = () => {
-            if (isValidDuration(decodedDuration ?? undefined)) {
-                return decodedDuration!;
-            }
-
+            if (isValidDuration(decodedDuration ?? undefined)) return decodedDuration!;
             const reportedDuration = audio.duration;
             const seekableEnd = getLastRangeEnd(audio.seekable);
-
             if (isValidDuration(reportedDuration)) {
-                if (isValidDuration(seekableEnd) && reportedDuration - seekableEnd > 0.5) {
-                    return seekableEnd;
-                }
-
+                if (isValidDuration(seekableEnd) && reportedDuration - seekableEnd > 0.5) return seekableEnd;
                 return reportedDuration;
             }
-
             return isValidDuration(seekableEnd) ? seekableEnd : 0;
         };
 
-        const updateTime = () => {
-            if (!isDragging) setCurrentTime(audio.currentTime);
-        };
+        const updateTime = () => { if (!isDragging) setCurrentTime(audio.currentTime); };
         const updateDuration = () => {
             const d = getNormalizedDuration();
-
-            if (isValidDuration(d)) {
-                setDuration(d);
-            }
+            if (isValidDuration(d)) setDuration(d);
         };
-
         const checkBuffered = () => {
             const normalizedDuration = getNormalizedDuration();
             const bufferedEnd = getLastRangeEnd(audio.buffered);
             const seekableEnd = getLastRangeEnd(audio.seekable);
-
             if (isValidDuration(normalizedDuration)) {
-                if (
-                    isValidDuration(decodedDuration ?? undefined)
-                    || bufferedEnd >= normalizedDuration - 0.5
-                    || seekableEnd >= normalizedDuration - 0.5
-                ) {
+                if (isValidDuration(decodedDuration ?? undefined) || bufferedEnd >= normalizedDuration - 0.5 || seekableEnd >= normalizedDuration - 0.5) {
                     setIsFullyLoaded(true);
                 }
             }
         };
-
-        const updateVolume = () => {
-            setIsMuted(audio.muted);
-        };
-        const updatePlayState = () => {
-            setIsPlaying(!audio.paused);
-        };
+        const updateVolume = () => setIsMuted(audio.muted);
+        const updatePlayState = () => setIsPlaying(!audio.paused);
         const handleEnded = () => {
             setIsPlaying(false);
             if (isValidDuration(audio.currentTime) && audio.currentTime < getNormalizedDuration() - 0.5) {
@@ -158,7 +113,7 @@ export const AudioPlayerControl: React.FC<AudioPlayerControlProps> = ({ audio, v
                 setCurrentTime(audio.currentTime);
             }
         };
-        
+
         audio.addEventListener('timeupdate', updateTime);
         audio.addEventListener('loadedmetadata', updateDuration);
         audio.addEventListener('durationchange', updateDuration);
@@ -171,8 +126,7 @@ export const AudioPlayerControl: React.FC<AudioPlayerControlProps> = ({ audio, v
         audio.addEventListener('play', updatePlayState);
         audio.addEventListener('pause', updatePlayState);
         audio.addEventListener('ended', handleEnded);
-        
-        // Initial check
+
         updateDuration();
         checkBuffered();
         setCurrentTime(audio.currentTime || 0);
@@ -215,7 +169,6 @@ export const AudioPlayerControl: React.FC<AudioPlayerControlProps> = ({ audio, v
 
     const handleSeekEnd = () => {
         setIsDragging(false);
-        // Resume playback if it was paused (e.g. ended) and we seeked to a valid position
         if (audio.paused && duration > 0 && audio.currentTime < duration) {
             audio.play().catch(err => console.warn("Could not resume playback:", err));
         }
@@ -236,80 +189,81 @@ export const AudioPlayerControl: React.FC<AudioPlayerControlProps> = ({ audio, v
     };
 
     const togglePlay = () => {
-        if (audio.paused) {
-            audio.play().catch(err => console.warn("Could not play audio:", err));
-        } else {
-            audio.pause();
-        }
+        if (audio.paused) audio.play().catch(err => console.warn("Could not play audio:", err));
+        else audio.pause();
     };
 
     return (
-        <div className={`flex items-center gap-3 rounded-full bg-white/90 backdrop-blur-md border border-[#dce3dd] shadow-[0_2px_10px_rgba(22,32,26,0.06)] ${mobile ? 'w-full p-1.5' : 'flex-none py-2 pl-2 pr-3.5'}`}>
+        <div className={`flex items-center gap-3 rounded-xl bg-[#f8faf8] border border-[#d7e0d9] ${mobile ? 'w-full p-2' : 'py-2 px-3'}`}>
             <button
                 type="button"
                 onClick={togglePlay}
                 aria-label={isPlaying ? 'Pause' : 'Play'}
-                className={`${mobile ? 'w-10 h-10' : 'w-8 h-8'} flex-none rounded-full bg-[#008c3c] hover:bg-[#007331] flex items-center justify-center transition-colors`}
+                className={`${mobile ? 'w-10 h-10' : 'w-8 h-8'} flex-none rounded-lg bg-[#008c3c] hover:bg-[#007331] flex items-center justify-center transition-colors shadow-xs`}
             >
                 {isPlaying ? (
-                    <svg width={mobile ? 18 : 16} height={mobile ? 18 : 16} fill="#ffffff" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" /></svg>
+                    <svg width={mobile ? 18 : 15} height={mobile ? 18 : 15} fill="#ffffff" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" /></svg>
                 ) : (
-                    <svg width={mobile ? 18 : 16} height={mobile ? 18 : 16} fill="#ffffff" viewBox="0 0 24 24"><path d="M8 5v14l11-7z" /></svg>
+                    <svg width={mobile ? 18 : 15} height={mobile ? 18 : 15} fill="#ffffff" viewBox="0 0 24 24"><path d="M8 5v14l11-7z" /></svg>
                 )}
             </button>
 
-            <div
-                ref={seekBarRef}
-                role="slider"
-                tabIndex={canSeek ? 0 : -1}
-                aria-label="Seek"
-                aria-valuemin={0}
-                aria-valuemax={Math.round(duration)}
-                aria-valuenow={Math.round(currentTime)}
-                aria-valuetext={`${formatTime(currentTime)} of ${formatTime(duration)}`}
-                aria-disabled={!canSeek}
-                title={canSeek ? undefined : 'Loading audio…'}
-                onKeyDown={handleSeekKey}
-                onPointerDown={(e) => {
-                    if (!canSeek) return;
-                    e.currentTarget.setPointerCapture(e.pointerId);
-                    setIsDragging(true);
-                    seekToPointer(e.clientX);
-                }}
-                onPointerMove={(e) => {
-                    if (e.currentTarget.hasPointerCapture(e.pointerId)) seekToPointer(e.clientX);
-                }}
-                onPointerUp={handleSeekEnd}
-                onPointerCancel={() => setIsDragging(false)}
-                className={`group relative ${mobile ? 'flex-1 min-w-0 h-8' : 'w-20 sm:w-[140px] h-4'} flex items-center touch-none focus:outline-none ${canSeek ? 'cursor-pointer' : 'cursor-progress'}`}
-            >
-                <div className="w-full h-[3px] rounded-sm bg-[#dce3dd] overflow-hidden">
-                    <div className={`h-full rounded-sm bg-[#008c3c] ${canSeek ? '' : 'opacity-50'}`} style={{ width: `${progress * 100}%` }} />
+            <div className="flex-1 min-w-0 flex flex-col gap-1">
+                <div className="flex items-center justify-between gap-2">
+                    <span className="font-mono text-[10px] font-semibold tracking-[.12em] text-[#008c3c]">
+                        {isPlaying ? 'MELODY PLAYING' : 'MELODY PREVIEW'}
+                    </span>
+                    <span className="font-mono text-[11px] font-medium text-[#4b5c53] tabular-nums whitespace-nowrap">
+                        {formatTime(currentTime)} / {formatTime(duration)}
+                    </span>
                 </div>
-                {canSeek && (
-                    <div
-                        className={mobile
-                            ? 'absolute w-3 h-3 -ml-1.5 rounded-full bg-[#008c3c] shadow'
-                            : 'absolute w-2.5 h-2.5 -ml-[5px] rounded-full bg-[#008c3c] opacity-0 group-hover:opacity-100 group-focus-visible:opacity-100 transition-opacity'}
-                        style={{ left: `${progress * 100}%` }}
-                    />
-                )}
+                <div
+                    ref={seekBarRef}
+                    role="slider"
+                    tabIndex={canSeek ? 0 : -1}
+                    aria-label="Seek"
+                    aria-valuemin={0}
+                    aria-valuemax={Math.round(duration)}
+                    aria-valuenow={Math.round(currentTime)}
+                    aria-valuetext={`${formatTime(currentTime)} of ${formatTime(duration)}`}
+                    aria-disabled={!canSeek}
+                    title={canSeek ? undefined : 'Loading audio…'}
+                    onKeyDown={handleSeekKey}
+                    onPointerDown={(e) => {
+                        if (!canSeek) return;
+                        e.currentTarget.setPointerCapture(e.pointerId);
+                        setIsDragging(true);
+                        seekToPointer(e.clientX);
+                    }}
+                    onPointerMove={(e) => {
+                        if (e.currentTarget.hasPointerCapture(e.pointerId)) seekToPointer(e.clientX);
+                    }}
+                    onPointerUp={handleSeekEnd}
+                    onPointerCancel={() => setIsDragging(false)}
+                    className={`group relative ${mobile ? 'h-6' : 'w-full min-w-[140px] h-4'} flex items-center touch-none focus:outline-none ${canSeek ? 'cursor-pointer' : 'cursor-progress'}`}
+                >
+                    <div className="w-full h-1.5 rounded-full bg-[#dce3dd] overflow-hidden">
+                        <div className={`h-full rounded-full bg-[#008c3c] ${canSeek ? '' : 'opacity-50'}`} style={{ width: `${progress * 100}%` }} />
+                    </div>
+                    {canSeek && (
+                        <div
+                            className={mobile
+                                ? 'absolute w-3.5 h-3.5 -ml-[7px] rounded-full bg-white border-2 border-[#008c3c] shadow'
+                                : 'absolute w-3 h-3 -ml-1.5 rounded-full bg-white border-2 border-[#008c3c] shadow opacity-0 group-hover:opacity-100 group-focus-visible:opacity-100 transition-opacity'}
+                            style={{ left: `${progress * 100}%` }}
+                        />
+                    )}
+                </div>
             </div>
-
-            <span className="flex-none font-mono text-[11px] font-medium text-[#4b5c53] tabular-nums whitespace-nowrap">
-                {formatTime(currentTime)} / {formatTime(duration)}
-            </span>
 
             <button
                 type="button"
                 onClick={toggleMute}
                 aria-label={isMuted ? 'Unmute' : 'Mute'}
                 title={isMuted ? 'Unmute' : 'Mute'}
-                className={mobile
-                    ? 'w-10 h-10 flex-none rounded-full flex items-center justify-center text-[#4b5c53]'
-                    : 'hidden sm:block text-[#73857b] hover:text-[#16201a] transition-colors'}
+                className="w-8 h-8 flex-none rounded-lg flex items-center justify-center text-[#4b5c53] hover:bg-[#e9f5ee] hover:text-[#008c3c] transition-colors"
             >
-                {isMuted ? <SpeakerXMarkIcon className={mobile ? 'w-[18px] h-[18px]' : 'w-4 h-4'} /> : <SpeakerWaveIcon className={mobile ? 'w-[18px] h-[18px]' : 'w-4 h-4'} />}
+                {isMuted ? <SpeakerXMarkIcon className="w-4 h-4" /> : <SpeakerWaveIcon className="w-4 h-4" />}
             </button>
         </div>
     );

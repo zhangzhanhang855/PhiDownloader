@@ -17,17 +17,16 @@ interface MobileLibraryProps {
     onSortConfigChange: (config: SortConfig) => void;
     onOpenMenu: () => void;
     onOpenRange: () => void;
-    /** Replaces the list, filters and search while bulk download mode is on. */
     bulkPanel?: React.ReactNode;
 }
 
-const ROW_HEIGHT = 60;
+const ROW_HEIGHT = 64;
 
 const SongThumbnail: React.FC<{ src: string }> = ({ src }) => {
     const [loaded, setLoaded] = useState(false);
     const [failed, setFailed] = useState(false);
     return (
-        <span className="relative w-16 h-9 flex-none rounded-md overflow-hidden border border-[#dce3dd] bg-[repeating-linear-gradient(135deg,#e8ede9_0_4px,#dfe6e1_4px_8px)]">
+        <span className="relative w-16 h-9 flex-none rounded-md overflow-hidden border border-[#d7e0d9] bg-[repeating-linear-gradient(135deg,#e9eee9_0_4px,#dfe6e1_4px_8px)]">
             {!failed && (
                 <img
                     src={src}
@@ -44,7 +43,7 @@ const SongThumbnail: React.FC<{ src: string }> = ({ src }) => {
     );
 };
 
-const chip = 'flex-none h-[34px] rounded-[17px] border flex items-center transition-colors';
+const chip = 'flex-none h-[34px] rounded-full border flex items-center transition-colors';
 
 export const MobileLibrary: React.FC<MobileLibraryProps> = ({
     filter,
@@ -77,7 +76,7 @@ export const MobileLibrary: React.FC<MobileLibraryProps> = ({
             return (
                 <div className="flex items-center justify-center gap-3 py-12 text-sm text-[#4b5c53]">
                     <Spinner />
-                    <span>Loading song list…</span>
+                    <span>Loading timetable…</span>
                 </div>
             );
         }
@@ -90,7 +89,7 @@ export const MobileLibrary: React.FC<MobileLibraryProps> = ({
             );
         }
         if (displayedSongs.length === 0) {
-            return <p className="px-4 py-12 text-center text-sm text-[#73857b]">No songs found.</p>;
+            return <p className="px-4 py-12 text-center text-sm text-[#73857b]">No matching tracks found.</p>;
         }
         return (
             <div style={{ height: `${rowVirtualizer.getTotalSize()}px`, position: 'relative' }}>
@@ -104,12 +103,17 @@ export const MobileLibrary: React.FC<MobileLibraryProps> = ({
                             role="option"
                             aria-selected={selected}
                             onClick={() => onOpenSong(song)}
-                            className={`absolute left-0 top-0 w-full h-[60px] flex items-center gap-3 px-2.5 rounded-[10px] text-left ${selected ? 'bg-[#e8f5ee] border-l-[3px] border-[#008c3c]' : 'active:bg-[#eef2ee] border-l-[3px] border-transparent'}`}
+                            className={`absolute left-0 top-0 w-full h-[58px] flex items-center gap-3 px-3 rounded-xl text-left transition-colors ${
+                                selected
+                                    ? 'bg-[#e9f5ee] border border-[#008c3c]/35'
+                                    : 'border border-transparent active:bg-[#f4f6f4]'
+                            }`}
                             style={{ transform: `translateY(${virtualItem.start}px)` }}
                         >
+                            <span className={`w-1 h-7 rounded-full flex-none ${selected ? 'bg-[#008c3c]' : 'bg-transparent'}`} />
                             <SongThumbnail src={getBlurIllustrationUrl(settings.proxySource, song.id)} />
                             <span className="flex-1 min-w-0 flex flex-col gap-px">
-                                <span className={`text-[15px] leading-[1.25] truncate ${selected ? 'text-[#006b2e] font-semibold' : 'text-[#16201a] font-medium'}`}>{song.name}</span>
+                                <span className={`text-[14.5px] leading-[1.25] truncate ${selected ? 'text-[#00682c] font-bold' : 'text-[#16201a] font-semibold'}`}>{song.name}</span>
                                 <span className="text-xs leading-[1.3] text-[#73857b] truncate">{song.composer}</span>
                             </span>
                         </button>
@@ -121,12 +125,12 @@ export const MobileLibrary: React.FC<MobileLibraryProps> = ({
 
     return (
         <div className="absolute inset-0 flex flex-col bg-white">
-            <div className="relative flex-none bg-[#f8faf8] border-b border-[#dce3dd]">
-                <div className="absolute inset-x-0 top-0 h-[3px] bg-[#008c3c]" aria-hidden="true" />
-                <header className="h-[52px] flex items-center justify-between gap-3 pl-[18px] pr-2 pt-0.5">
+            <div className="relative flex-none bg-[#fafbfa] border-b border-[#d7e0d9]">
+                <div className="absolute inset-x-0 top-0 h-[4px] bg-[#008c3c]" aria-hidden="true" />
+                <header className="h-14 flex items-center justify-between gap-3 pl-4 pr-2 pt-1">
                     <div className="flex items-center gap-2.5 min-w-0">
-                        <span className="inline-flex items-center justify-center px-1.5 py-0.5 rounded bg-[#008c3c] font-mono text-[10px] font-bold tracking-wider text-white flex-none" aria-hidden="true">JR</span>
-                        <h1 className="font-bold text-[13px] tracking-[.14em] text-[#16201a] truncate">PHIGROS CHART DOWNLOADER</h1>
+                        <span className="inline-flex items-center justify-center px-2 py-0.5 rounded bg-[#008c3c] font-mono text-[10px] font-bold tracking-wider text-white flex-none" aria-hidden="true">JR</span>
+                        <h1 className="font-bold text-[13.5px] tracking-[.1em] text-[#16201a] truncate">PHIGROS CHART TERMINAL</h1>
                     </div>
                     <button
                         type="button"
@@ -144,7 +148,7 @@ export const MobileLibrary: React.FC<MobileLibraryProps> = ({
                             type="button"
                             aria-pressed={onlyHasAt}
                             onClick={() => setOnlyHasAt(v => !v)}
-                            className={`${chip} gap-1.5 px-3 font-mono text-xs font-semibold ${onlyHasAt ? 'border-[#008c3c]/40 bg-[#e8f5ee] text-[#008c3c]' : 'border-[#dce3dd] bg-white text-[#4b5c53]'}`}
+                            className={`${chip} gap-1.5 px-3 font-mono text-xs font-semibold ${onlyHasAt ? 'border-[#008c3c]/40 bg-[#e9f5ee] text-[#008c3c]' : 'border-[#d7e0d9] bg-white text-[#4b5c53]'}`}
                         >
                             Has AT
                         </button>
@@ -152,7 +156,7 @@ export const MobileLibrary: React.FC<MobileLibraryProps> = ({
                             type="button"
                             onClick={onOpenRange}
                             aria-label={`Difficulty range ${rangeLabel}`}
-                            className={`${chip} gap-1 pl-3 pr-2.5 font-mono text-xs font-medium ${isRangeActive ? 'border-[#008c3c]/40 bg-[#e8f5ee] text-[#008c3c]' : 'border-[#dce3dd] bg-white text-[#4b5c53]'}`}
+                            className={`${chip} gap-1 pl-3 pr-2.5 font-mono text-xs font-semibold ${isRangeActive ? 'border-[#008c3c]/40 bg-[#e9f5ee] text-[#008c3c]' : 'border-[#d7e0d9] bg-white text-[#4b5c53]'}`}
                         >
                             Lv {rangeLabel}
                             <ChevronDownIcon className="w-3 h-3 [stroke-width:2]" />
@@ -161,15 +165,15 @@ export const MobileLibrary: React.FC<MobileLibraryProps> = ({
                             type="button"
                             onClick={cycleSort}
                             aria-label={`Sort order: ${SORT_CYCLE[sortIndex].label}`}
-                            className={`${chip} gap-[5px] px-3 border-[#dce3dd] bg-white text-xs font-medium text-[#4b5c53]`}
+                            className={`${chip} gap-[5px] px-3 border-[#d7e0d9] bg-white text-xs font-semibold text-[#4b5c53]`}
                         >
                             {SORT_CYCLE[sortIndex].label}
                             <svg width="12" height="12" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M3 7.5L7.5 3m0 0L12 7.5M7.5 3v13.5m13.5 0L16.5 21m0 0L12 16.5m4.5 4.5V7.5" /></svg>
                         </button>
                         <span className="flex-1" />
-                        <span className="flex-none font-mono text-[10px] font-medium tracking-[.12em] text-[#73857b] whitespace-nowrap">
-                            {isSuggestion && <span className="text-[#008c3c]">DID YOU MEAN · </span>}
-                            {isLoading ? '—' : `${displayedSongs.length} SONGS`}
+                        <span className="flex-none font-mono text-[10px] font-semibold tracking-[.12em] text-[#73857b] whitespace-nowrap">
+                            {isSuggestion && <span className="text-[#008c3c]">SUGGESTED · </span>}
+                            {isLoading ? '—' : `${displayedSongs.length} TRACKS`}
                         </span>
                     </div>
                 )}
@@ -179,12 +183,12 @@ export const MobileLibrary: React.FC<MobileLibraryProps> = ({
                 <div className="flex-1 min-h-0">{bulkPanel}</div>
             ) : (
                 <>
-                    <div ref={parentRef} role="listbox" aria-label="Songs" className="flex-1 min-h-0 overflow-y-auto px-2 pt-1.5 pb-6 bg-white">
+                    <div ref={parentRef} role="listbox" aria-label="Songs" className="flex-1 min-h-0 overflow-y-auto px-2.5 pt-2 pb-6 bg-white">
                         {renderList()}
                     </div>
 
-                    <div className="flex-none px-4 pt-2.5 pb-[calc(16px+env(safe-area-inset-bottom))] bg-[#f8faf8] border-t border-[#dce3dd]">
-                        <label className="h-12 flex items-center gap-2.5 px-3.5 rounded-[14px] bg-white border border-[#dce3dd] focus-within:border-[#008c3c] focus-within:ring-2 focus-within:ring-[#008c3c]/15 transition-all">
+                    <div className="flex-none px-4 pt-2.5 pb-[calc(16px+env(safe-area-inset-bottom))] bg-[#fafbfa] border-t border-[#d7e0d9]">
+                        <label className="h-12 flex items-center gap-2.5 px-3.5 rounded-2xl bg-white border border-[#d7e0d9] focus-within:border-[#008c3c] focus-within:ring-2 focus-within:ring-[#008c3c]/15 transition-all">
                             <MagnifyingGlassIcon className="w-[18px] h-[18px] flex-none text-[#73857b]" />
                             <input
                                 type="text"
@@ -197,7 +201,7 @@ export const MobileLibrary: React.FC<MobileLibraryProps> = ({
                                         if (displayedSongs.length > 0) onOpenSong(displayedSongs[0]);
                                     }
                                 }}
-                                placeholder="Search songs or artists"
+                                placeholder="Search tracks or artists"
                                 aria-label="Search songs, artists or aliases"
                                 className="flex-1 min-w-0 bg-transparent text-base text-[#16201a] placeholder:text-[#8b9a91] focus:outline-none"
                             />

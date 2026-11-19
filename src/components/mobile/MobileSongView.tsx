@@ -28,11 +28,7 @@ interface MobileSongViewProps {
     onDownloaded: (fileName: string) => void;
 }
 
-// How far (px) the page has to scroll before the illustration is fully dimmed.
-const DIM_DISTANCE = 320;
-const MAX_DIM = 0.85;
-// The compact title bar fades in over this scroll range.
-const BAR_FADE_START = 120;
+const BAR_FADE_START = 140;
 const BAR_FADE_LENGTH = 60;
 
 const ProgressBar: React.FC<{ progress: number; className: string }> = ({ progress, className }) => (
@@ -46,21 +42,22 @@ const DifficultyTiles: React.FC<{
     onSelectDifficulty: (difficulty: string) => void;
 }> = ({ song, difficulties, selectedDifficulty, onSelectDifficulty }) => {
     const { settings } = useSettings();
-    // Always show the four standard slots (a missing chart is disabled), plus any extra charts such as SP.
     const slots = [...DIFFICULTY_ORDER, ...getExtraCharts(song.id).map(e => e.difficulty)];
 
     return (
         <div className="flex flex-col gap-2.5">
-            <span className="font-mono text-[10px] font-semibold tracking-[.14em] text-[#4b5c53]">AVAILABLE DIFFICULTIES</span>
+            <span className="font-mono text-[10px] font-semibold tracking-[.14em] text-[#4b5c53]">SELECT CLASS / DIFFICULTY</span>
             <div className={`grid ${slots.length > 4 ? 'grid-cols-5' : 'grid-cols-4'} gap-2`} role="radiogroup" aria-label="Difficulty">
                 {slots.map(diff => {
                     const available = difficulties.includes(diff);
                     const selected = available && diff === selectedDifficulty;
+                    const color = getDifficultyColor(diff);
                     const key = diff as keyof Song['charters'];
                     const extra = getExtraChart(song.id, diff);
                     const level = song.difficulties?.[key] ?? extra?.level;
                     const charter = song.charters[key];
                     const tooltip = [extra?.tooltip, settings.advancedInfo && charter ? `Charter: ${charter}` : null].filter(Boolean).join('\n');
+
                     return (
                         <button
                             key={diff}
@@ -70,15 +67,16 @@ const DifficultyTiles: React.FC<{
                             disabled={!available}
                             onClick={() => onSelectDifficulty(diff)}
                             title={tooltip || undefined}
-                            className={`h-[68px] px-3 py-2.5 rounded-[10px] border backdrop-blur-[4px] flex flex-col items-start justify-between disabled:opacity-40 disabled:cursor-not-allowed ${
+                            className={`relative overflow-hidden h-[70px] px-3 py-2.5 rounded-xl border flex flex-col items-start justify-between disabled:opacity-40 disabled:cursor-not-allowed ${
                                 selected
                                     ? 'bg-white border-[#008c3c] ring-2 ring-[#008c3c]/20 shadow-sm'
-                                    : 'bg-white/85 border-[#dce3dd]'
+                                    : 'bg-white border-[#d7e0d9]'
                             }`}
                         >
-                            <span className="font-bold text-[13px] tracking-[.08em]" style={{ color: getDifficultyColor(diff) }}>{diff}</span>
-                            <span className={`text-[22px] font-semibold leading-none ${selected ? 'text-[#16201a]' : 'text-[#4b5c53]'}`}>
-                                {available ? floorLevel(level ?? '?') : 'N/A'}
+                            <div className="absolute inset-x-0 top-0 h-1" style={{ backgroundColor: available ? color : '#cbd5ce' }} />
+                            <span className="font-mono font-bold text-xs tracking-[.08em] pt-0.5" style={{ color }}>{diff}</span>
+                            <span className={`text-[22px] font-bold leading-none tabular-nums ${selected ? 'text-[#16201a]' : 'text-[#4b5c53]'}`}>
+                                {available ? floorLevel(level ?? '?') : '—'}
                             </span>
                         </button>
                     );
@@ -111,7 +109,6 @@ export const MobileSongView: React.FC<MobileSongViewProps> = ({
     const scrollRef = useRef<HTMLDivElement>(null);
     const filesToggleRef = useRef<HTMLButtonElement>(null);
 
-    // Each time a song page is pushed it starts from the top with the file list collapsed.
     useEffect(() => {
         if (!open) return;
         scrollRef.current?.scrollTo({ top: 0 });
@@ -120,9 +117,9 @@ export const MobileSongView: React.FC<MobileSongViewProps> = ({
     }, [open, song?.id]);
 
     const toggleFiles = () => {
-        const open = !filesOpen;
-        setFilesOpen(open);
-        if (open) {
+        const next = !filesOpen;
+        setFilesOpen(next);
+        if (next) {
             requestAnimationFrame(() => {
                 const toggle = filesToggleRef.current;
                 if (toggle) scrollRef.current?.scrollTo({ top: toggle.offsetTop - 72, behavior: 'smooth' });
@@ -131,10 +128,8 @@ export const MobileSongView: React.FC<MobileSongViewProps> = ({
     };
 
     const isExporting = exportState.type !== null;
-    const dim = Math.min(scrollTop / DIM_DISTANCE, 1) * MAX_DIM;
     const barOpacity = Math.max(0, Math.min(1, (scrollTop - BAR_FADE_START) / BAR_FADE_LENGTH));
 
-    // Data-light hero: the 512px low-res art shows first, the full illustration fades in over it once loaded.
     const lowResUrl = song && !hasPerDifficultyIllustrations(song.id)
         ? getResourceUrl(settings.proxySource, 'illustrationLowRes', `${song.id}.png`)
         : null;
@@ -142,45 +137,50 @@ export const MobileSongView: React.FC<MobileSongViewProps> = ({
     return (
         <div
             aria-hidden={!open}
-            className={`absolute inset-0 z-10 bg-[#f3f5f3] shadow-[-20px_0_60px_rgba(22,32,26,0.16)] transition-[transform,visibility] duration-[340ms] ease-[cubic-bezier(.16,1,.3,1)] ${open ? 'translate-x-0 visible' : 'translate-x-[105%] invisible'}`}
+            className={`absolute inset-0 z-10 jr-station-bg shadow-[-20px_0_60px_rgba(18,28,22,0.16)] transition-[transform,visibility] duration-[340ms] ease-[cubic-bezier(.16,1,.3,1)] ${open ? 'translate-x-0 visible' : 'translate-x-[105%] invisible'}`}
         >
-            {/* Hero illustration */}
-            <div className="absolute inset-x-0 top-0 h-[296px] overflow-hidden bg-[repeating-linear-gradient(135deg,#e9eee9_0_10px,#e2e8e3_10px_20px)]">
-                <div
-                    className="absolute inset-0 bg-cover bg-center"
-                    style={{ backgroundImage: lowResUrl ? `url("${lowResUrl}")` : 'none' }}
-                    aria-hidden="true"
-                />
-                <div
-                    className="absolute inset-0 bg-cover bg-center transition-opacity duration-[600ms] ease-out"
-                    style={{ backgroundImage: bgImage ? `url("${bgImage}")` : 'none', opacity: isBgLoaded ? 1 : 0 }}
-                    aria-hidden="true"
-                />
-                <div className="absolute inset-0 bg-[linear-gradient(to_bottom,rgba(243,245,243,0.18)_0%,rgba(243,245,243,0)_22%,rgba(243,245,243,0.78)_62%,#f3f5f3_92%)]" />
-            </div>
-            <div className="absolute inset-0 pointer-events-none bg-[#f3f5f3]" style={{ opacity: dim }} />
-
             <div
                 ref={scrollRef}
                 onScroll={e => setScrollTop(e.currentTarget.scrollTop)}
-                className="absolute inset-0 overflow-y-auto px-5 pt-[176px] pb-[130px]"
+                className="absolute inset-0 overflow-y-auto px-4 pt-16 pb-[130px]"
             >
                 {song && (
                     <div className="flex flex-col gap-5">
-                        <div className="flex flex-col gap-1 min-w-0">
-                            <span className="relative z-10 self-start px-2 py-0.5 rounded bg-[#e8f5ee] border border-[#008c3c]/25 font-mono text-[11px] font-semibold tracking-[.1em] text-[#008c3c] break-all select-all cursor-text" title="Song ID">{song.id}</span>
-                            <h2 className="text-[32px] font-bold leading-[1.12] tracking-[-0.01em] text-[#16201a] break-words text-balance">{song.name}</h2>
-                            <span className="text-[15px] font-medium text-[#4b5c53]">{song.composer}</span>
+                        {/* JR Station Signboard Card */}
+                        <div className="rounded-2xl border border-[#d7e0d9] bg-white shadow-[0_4px_16px_rgba(18,28,22,0.06)] overflow-hidden">
+                            <div className="relative h-44 overflow-hidden bg-[repeating-linear-gradient(135deg,#e9eee9_0_10px,#dfe6e1_10px_20px)]">
+                                <div
+                                    className="absolute inset-0 bg-cover bg-center"
+                                    style={{ backgroundImage: lowResUrl ? `url("${lowResUrl}")` : 'none' }}
+                                    aria-hidden="true"
+                                />
+                                <div
+                                    className="absolute inset-0 bg-cover bg-center transition-opacity duration-[600ms] ease-out"
+                                    style={{ backgroundImage: bgImage ? `url("${bgImage}")` : 'none', opacity: isBgLoaded ? 1 : 0 }}
+                                    aria-hidden="true"
+                                />
+                            </div>
+                            <div className="p-4 flex flex-col gap-2">
+                                <span className="self-start px-2 py-0.5 rounded bg-[#e9f5ee] border border-[#008c3c]/25 font-mono text-[10px] font-semibold tracking-[.1em] text-[#008c3c] break-all select-all">
+                                    {song.id}
+                                </span>
+                                <h2 className="text-2xl font-bold leading-[1.15] text-[#16201a] break-words text-balance">{song.name}</h2>
+                                <span className="text-sm font-medium text-[#4b5c53]">{song.composer}</span>
+                                {settings.newUiAudioPreview && audio && (
+                                    <div className="pt-2">
+                                        <AudioPlayerControl audio={audio} variant="mobile" />
+                                    </div>
+                                )}
+                            </div>
+                            <div className="h-1.5 w-full bg-[#008c3c]" />
                         </div>
-
-                        {settings.newUiAudioPreview && audio && <AudioPlayerControl audio={audio} variant="mobile" />}
 
                         {isLoadingFiles ? (
                             <div className="flex flex-col gap-2.5">
-                                <span className="font-mono text-[10px] font-semibold tracking-[.14em] text-[#4b5c53]">LOADING DIFFICULTIES...</span>
+                                <span className="font-mono text-[10px] font-semibold tracking-[.14em] text-[#4b5c53]">LOADING DIFFICULTIES…</span>
                                 <div className="grid grid-cols-4 gap-2">
                                     {[0, 1, 2, 3].map(i => (
-                                        <div key={i} className="h-[68px] rounded-[10px] border border-[#dce3dd] bg-white/70 animate-pulse" />
+                                        <div key={i} className="h-[70px] rounded-xl border border-[#d7e0d9] bg-white animate-pulse" />
                                     ))}
                                 </div>
                             </div>
@@ -195,23 +195,23 @@ export const MobileSongView: React.FC<MobileSongViewProps> = ({
                             <p className="text-sm text-[#73857b]">No charts were found for this song.</p>
                         )}
 
-                        <div className="flex flex-col">
+                        <div className="flex flex-col rounded-xl border border-[#d7e0d9] bg-white px-4">
                             <button
                                 ref={filesToggleRef}
                                 type="button"
                                 onClick={toggleFiles}
                                 aria-expanded={filesOpen}
-                                className="h-[52px] flex items-center justify-between border-t border-[#dce3dd]"
+                                className="h-[52px] flex items-center justify-between"
                             >
-                                <span className="flex items-center gap-2 text-sm font-medium text-[#16201a]">
+                                <span className="flex items-center gap-2 text-sm font-semibold text-[#16201a]">
                                     <ChevronDownIcon className={`w-3.5 h-3.5 [stroke-width:2] transition-transform duration-200 ${filesOpen ? '' : '-rotate-90'}`} />
-                                    Individual files
+                                    Asset Manifest
                                     <span className="font-mono text-[11px] font-medium text-[#73857b]">· {isLoadingFiles ? '…' : files.length}</span>
                                 </span>
                                 <span className="font-mono text-[10px] font-semibold tracking-[.12em] text-[#008c3c]">{filesOpen ? 'HIDE' : 'SHOW'}</span>
                             </button>
                             {filesOpen && (
-                                <div className="pt-1.5">
+                                <div className="pb-4 pt-1 border-t border-[#e6ece7]">
                                     <FileTable selectedSong={song} files={files} isLoading={isLoadingFiles} onDownloaded={onDownloaded} variant="mobile" />
                                 </div>
                             )}
@@ -220,25 +220,25 @@ export const MobileSongView: React.FC<MobileSongViewProps> = ({
                 )}
             </div>
 
-            {/* Compact title bar, fades in once the big title scrolls away */}
+            {/* Compact sticky top bar */}
             <div
-                className="absolute inset-x-0 top-0 h-14 px-16 flex items-center justify-center bg-white/92 backdrop-blur-[14px] border-b border-[#dce3dd] pointer-events-none"
+                className="absolute inset-x-0 top-0 h-14 px-16 flex items-center justify-center bg-white/95 backdrop-blur-[12px] border-b border-[#d7e0d9] pointer-events-none"
                 style={{ opacity: barOpacity }}
                 aria-hidden="true"
             >
-                <span className="text-[15px] font-semibold text-[#16201a] truncate">{song?.name}</span>
+                <span className="text-[15px] font-bold text-[#16201a] truncate">{song?.name}</span>
             </div>
             <button
                 type="button"
                 onClick={onBack}
                 aria-label="Back"
-                className="absolute top-1.5 left-3 w-11 h-11 rounded-full border border-[#dce3dd] bg-white/85 backdrop-blur-[10px] text-[#16201a] shadow-sm flex items-center justify-center"
+                className="absolute top-2 left-3 w-10 h-10 rounded-full border border-[#d7e0d9] bg-white/95 backdrop-blur-[8px] text-[#16201a] shadow-sm flex items-center justify-center"
             >
                 <svg width="20" height="20" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" /></svg>
             </button>
 
             {/* Thumb-reach export bar */}
-            <div className="absolute inset-x-0 bottom-0 flex gap-2.5 px-4 pt-6 pb-[calc(16px+env(safe-area-inset-bottom))] bg-[linear-gradient(to_top,#f3f5f3_62%,rgba(243,245,243,0))]">
+            <div className="absolute inset-x-0 bottom-0 flex gap-2.5 px-4 pt-5 pb-[calc(16px+env(safe-area-inset-bottom))] bg-[linear-gradient(to_top,#f4f6f4_68%,rgba(244,246,244,0))]">
                 <button
                     type="button"
                     onClick={onExportChart}
@@ -263,11 +263,11 @@ export const MobileSongView: React.FC<MobileSongViewProps> = ({
                     onClick={onExportAllAssets}
                     disabled={isExporting || files.length === 0}
                     aria-label="Export all assets as .zip"
-                    className="relative overflow-hidden flex-none w-[72px] h-[54px] rounded-xl border border-[#dce3dd] bg-white/90 backdrop-blur-[8px] text-[#16201a] flex flex-col items-center justify-center gap-px disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="relative overflow-hidden flex-none w-[72px] h-[54px] rounded-xl border border-[#d7e0d9] bg-white text-[#16201a] flex flex-col items-center justify-center gap-px shadow-xs disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                     {exportState.type === 'phira'
                         ? <span className="[&_svg]:w-[18px] [&_svg]:h-[18px]"><Spinner /></span>
-                        : <span className="font-mono text-[13px] font-semibold tracking-[.06em]">.zip</span>}
+                        : <span className="font-mono text-[13px] font-bold tracking-[.06em]">.zip</span>}
                     <span className="text-[10px] leading-none text-[#4b5c53]">All assets</span>
                     {exportState.type === 'phira' && <ProgressBar progress={exportState.progress} className="bg-[#008c3c]" />}
                 </button>

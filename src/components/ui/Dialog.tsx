@@ -16,12 +16,10 @@ const EYEBROW_COLOR: Record<Tone, string> = {
 
 interface DialogFrameProps {
     onClose: () => void;
-    /** Whether clicking the backdrop closes the dialog. Escape always calls onClose. */
     closeOnBackdrop?: boolean;
     tone?: Tone;
     labelledBy?: string;
     role?: 'dialog' | 'alertdialog';
-    /** How the dialog is presented on phones: a bottom sheet sized to its content, or a full-height panel. */
     mobile?: 'sheet' | 'panel';
     className?: string;
     children: React.ReactNode;
@@ -32,7 +30,6 @@ const MOBILE_PANEL: Record<'sheet' | 'panel', string> = {
     panel: 'max-md:w-full max-md:max-w-none max-md:h-[calc(100dvh-10px)] max-md:max-h-none max-md:rounded-b-none max-md:border-b-0',
 };
 
-/** Soft backdrop plus clean white JR-styled dialog panel with a solid top accent bar. */
 export const DialogFrame: React.FC<DialogFrameProps> = ({
     onClose,
     closeOnBackdrop = true,
@@ -53,14 +50,14 @@ export const DialogFrame: React.FC<DialogFrameProps> = ({
 
     return (
         <div
-            className="motion-backdrop fixed inset-0 z-50 flex items-center justify-center p-4 max-md:p-0 max-md:items-end bg-[rgba(22,32,26,0.38)] backdrop-blur-[5px]"
+            className="motion-backdrop fixed inset-0 z-50 flex items-center justify-center p-4 max-md:p-0 max-md:items-end bg-[rgba(18,28,22,0.42)] backdrop-blur-[5px]"
             role={role}
             aria-modal="true"
             aria-labelledby={labelledBy}
             onClick={closeOnBackdrop ? onClose : undefined}
         >
             <div
-                className={`motion-dialog relative flex flex-col overflow-hidden rounded-2xl border border-[#dce3dd] bg-white shadow-[0_24px_64px_rgba(22,32,26,0.18)] ${className} ${MOBILE_PANEL[mobile]}`}
+                className={`motion-dialog relative flex flex-col overflow-hidden rounded-2xl border border-[#d7e0d9] bg-white shadow-[0_24px_64px_rgba(18,28,22,0.2)] ${className} ${MOBILE_PANEL[mobile]}`}
                 onClick={(e) => e.stopPropagation()}
             >
                 <div className="dialog-topline" style={{ background: TOPLINE[tone] }} />
@@ -86,7 +83,7 @@ export const CloseButton: React.FC<{ onClick: () => void }> = ({ onClick }) => (
         type="button"
         onClick={onClick}
         aria-label="Close"
-        className="flex-none w-[34px] h-[34px] max-md:w-11 max-md:h-11 max-md:-mr-1.5 max-md:rounded-[10px] rounded-lg flex items-center justify-center text-[#73857b] hover:bg-[#eef2ee] hover:text-[#16201a] transition-colors"
+        className="flex-none w-[34px] h-[34px] max-md:w-11 max-md:h-11 max-md:-mr-1.5 max-md:rounded-[10px] rounded-lg flex items-center justify-center text-[#64786d] hover:bg-[#eef2ee] hover:text-[#16201a] transition-colors"
     >
         <svg width="18" height="18" fill="none" viewBox="0 0 24 24" strokeWidth={1.8} stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
@@ -101,19 +98,18 @@ interface DialogHeaderProps {
     onClose: () => void;
 }
 
-/** 68px header used by the large dialogs (Settings, FAQ). */
 export const DialogHeader: React.FC<DialogHeaderProps> = ({ id, eyebrow, title, onClose }) => (
-    <div className="h-[68px] flex-none flex items-center justify-between gap-3 px-6 max-md:px-5 border-b border-[#e8ede9]">
+    <div className="h-[70px] flex-none flex items-center justify-between gap-3 px-6 max-md:px-5 border-b border-[#e6ece7] bg-[#fafbfa]">
         <div className="flex flex-col">
             <Eyebrow>{eyebrow}</Eyebrow>
-            <h2 id={id} className="text-[21px] font-semibold leading-[1.25] text-[#16201a]">{title}</h2>
+            <h2 id={id} className="text-[20px] font-bold leading-[1.25] text-[#16201a]">{title}</h2>
         </div>
         <CloseButton onClick={onClose} />
     </div>
 );
 
 export const DialogFooter: React.FC<{ children: React.ReactNode; className?: string }> = ({ children, className = '' }) => (
-    <div className={`flex-none min-h-16 flex flex-wrap items-center justify-between gap-3 px-6 py-3 max-md:px-5 max-md:pb-[calc(16px+env(safe-area-inset-bottom))] border-t border-[#e8ede9] bg-[#f8faf8] ${className}`}>
+    <div className={`flex-none min-h-16 flex flex-wrap items-center justify-between gap-3 px-6 py-3 max-md:px-5 max-md:pb-[calc(16px+env(safe-area-inset-bottom))] border-t border-[#e6ece7] bg-[#fafbfa] ${className}`}>
         {children}
     </div>
 );
@@ -121,10 +117,10 @@ export const DialogFooter: React.FC<{ children: React.ReactNode; className?: str
 type ButtonVariant = 'primary' | 'warning' | 'danger' | 'outline' | 'ghost';
 
 const BUTTON_VARIANTS: Record<ButtonVariant, string> = {
-    primary: 'bg-[#008c3c] hover:bg-[#007331] text-white font-bold',
-    warning: 'bg-[#d97706] hover:bg-[#b45309] text-white font-bold',
-    danger: 'bg-[#dc2626] hover:bg-[#b91c1c] text-white font-bold',
-    outline: 'border border-[#dce3dd] bg-white hover:bg-[#f1f4f2] text-[#16201a] font-semibold',
+    primary: 'bg-[#008c3c] hover:bg-[#007331] text-white font-bold shadow-sm',
+    warning: 'bg-[#d97706] hover:bg-[#b45309] text-white font-bold shadow-sm',
+    danger: 'bg-[#dc2626] hover:bg-[#b91c1c] text-white font-bold shadow-sm',
+    outline: 'border border-[#d7e0d9] bg-white hover:bg-[#f2f5f2] text-[#16201a] font-semibold',
     ghost: 'text-[#4b5c53] hover:text-[#16201a] hover:bg-[#eef2ee] font-semibold',
 };
 
@@ -152,16 +148,11 @@ interface NoticeDialogProps {
     eyebrow: string;
     title: string;
     onClose: () => void;
-    /** Shown in the bottom-left corner, e.g. "Shown once". */
     footnote?: string;
     actions: React.ReactNode;
     children: React.ReactNode;
 }
 
-/**
- * Compact notice frame (info, warning or error). Only informational notices close when
- * the backdrop is clicked.
- */
 export const NoticeDialog: React.FC<NoticeDialogProps> = ({ tone, icon, eyebrow, title, onClose, footnote, actions, children }) => {
     const titleId = `notice-${eyebrow.toLowerCase().replace(/\s+/g, '-')}`;
     return (
@@ -172,10 +163,10 @@ export const NoticeDialog: React.FC<NoticeDialogProps> = ({ tone, icon, eyebrow,
             role={tone === 'info' ? 'dialog' : 'alertdialog'}
             labelledBy={titleId}
             mobile="sheet"
-            className="w-full max-w-[440px] gap-3.5 px-[22px] pt-[24px] pb-[18px] max-md:px-5 max-md:pt-2 max-md:pb-[calc(24px+env(safe-area-inset-bottom))] max-md:overflow-y-auto shadow-[0_24px_60px_rgba(22,32,26,0.16)]"
+            className="w-full max-w-[440px] gap-3.5 px-[22px] pt-[24px] pb-[18px] max-md:px-5 max-md:pt-2 max-md:pb-[calc(24px+env(safe-area-inset-bottom))] max-md:overflow-y-auto"
         >
             <Eyebrow tone={tone} className="tracking-[.14em]">{icon}{eyebrow}</Eyebrow>
-            <h2 id={titleId} className="text-[19px] max-md:text-[21px] font-semibold leading-[1.3] text-[#16201a]">{title}</h2>
+            <h2 id={titleId} className="text-[19px] max-md:text-[21px] font-bold leading-[1.3] text-[#16201a]">{title}</h2>
             {children}
             <div className={`flex flex-wrap items-center gap-2 pt-1 max-md:flex-col-reverse max-md:items-stretch max-md:gap-3.5 ${footnote ? 'justify-between' : 'justify-end'}`}>
                 {footnote && (

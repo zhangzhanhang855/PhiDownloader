@@ -38,6 +38,7 @@ const App: React.FC = () => {
     useEffect(() => {
         document.documentElement.dataset.blur = settings.newUiBlur ? 'on' : 'off';
     }, [settings.newUiBlur]);
+
     const [version, setVersion] = useState<string | null>(null);
     const [isLoadingVersion, setIsLoadingVersion] = useState<boolean>(true);
     const [errorVersion, setErrorVersion] = useState<string | null>(null);
@@ -48,7 +49,6 @@ const App: React.FC = () => {
     const [selectedSong, setSelectedSong] = useState<Song | null>(null);
     const [sortConfig, setSortConfig] = useState<SortConfig>({ type: 'alphanumerical', direction: 'asc' });
 
-    // The difficulty the user last picked; carried over to the next song when it has that chart.
     const [preferredDifficulty, setPreferredDifficulty] = useState<string>('IN');
     const [exportState, setExportState] = useState<ExportState>({ type: null, progress: 0 });
     const [bulkExportState, setBulkExportState] = useState<{
@@ -82,7 +82,6 @@ const App: React.FC = () => {
 
     const abortControllerRef = useRef<AbortController | null>(null);
 
-    // Background and Audio management
     const [bgImage, setBgImage] = useState<string | null>(null);
     const [isBgLoaded, setIsBgLoaded] = useState<boolean>(false);
     const [activeAudio, setActiveAudio] = useState<HTMLAudioElement | null>(null);
@@ -102,16 +101,12 @@ const App: React.FC = () => {
 
     const sortedSongs = React.useMemo(() => {
         const result = [...songs];
-
         if (sortConfig.type === 'alphanumerical') {
             result.sort((a, b) => a.name.localeCompare(b.name));
         }
-        // If 'unsorted', we rely on the original order (which is essentially what songs is)
-
         if (sortConfig.direction === 'desc') {
             result.reverse();
         }
-
         return result;
     }, [songs, sortConfig]);
 
@@ -176,17 +171,13 @@ const App: React.FC = () => {
             initialSongSelected.current = true;
             const urlParams = new URLSearchParams(window.location.search);
             const songIdFromUrl = urlParams.get('song');
-
             if (songIdFromUrl) {
                 const songToSelect = songs.find(s => s.id === songIdFromUrl);
-                if (songToSelect) {
-                    handleSongSelect(songToSelect);
-                }
+                if (songToSelect) handleSongSelect(songToSelect);
             }
         }
     }, [songs, handleSongSelect]);
 
-    // Illustration behind the workspace. Songs with per-difficulty art follow the selected difficulty.
     const illustrationUrl = selectedSong
         ? hasPerDifficultyIllustrations(selectedSong.id)
             ? getDifficultyIllustrationUrl(settings.proxySource, selectedSong.id, selectedDifficulty && ['EZ', 'HD', 'IN', 'AT'].includes(selectedDifficulty) ? selectedDifficulty : 'AT')
@@ -199,7 +190,6 @@ const App: React.FC = () => {
             setBgImage(null);
             return;
         }
-
         let cancelled = false;
         const img = new Image();
         img.src = illustrationUrl;
@@ -213,12 +203,9 @@ const App: React.FC = () => {
             setBgImage(null);
             setIsBgLoaded(false);
         };
-        return () => {
-            cancelled = true;
-        };
+        return () => { cancelled = true; };
     }, [illustrationUrl]);
 
-    // Audio preview
     useEffect(() => {
         if (!selectedSong || settings.bulkDownloadMode || !settings.newUiAudioPreview) {
             setActiveAudio(prev => {
@@ -230,7 +217,6 @@ const App: React.FC = () => {
 
         const audioUrl = getResourceUrl(settings.proxySource, 'music', `${selectedSong.id}.ogg`);
         const audio = new Audio();
-        // IMPORTANT: Must set crossOrigin to anonymous BEFORE loading to allow Web Audio API analysis
         audio.crossOrigin = "anonymous";
         audio.src = audioUrl;
         audio.loop = settings.newUiLoopAudio;
@@ -245,29 +231,20 @@ const App: React.FC = () => {
         if (settings.newUiAutoplayAudio) {
             const playPromise = audio.play();
             if (playPromise !== undefined) {
-                playPromise.catch(error => {
-                    console.warn("Autoplay blocked or audio failed to load:", error);
-                });
+                playPromise.catch(error => console.warn("Autoplay blocked or audio failed to load:", error));
             }
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [selectedSong, settings.newUiAudioPreview, settings.bulkDownloadMode, settings.proxySource]);
 
-    // Update audio loop property immediately when setting changes
     useEffect(() => {
-        if (activeAudio) {
-            activeAudio.loop = settings.newUiLoopAudio;
-        }
+        if (activeAudio) activeAudio.loop = settings.newUiLoopAudio;
     }, [activeAudio, settings.newUiLoopAudio]);
 
-    // Update audio volume when setting changes
     useEffect(() => {
-        if (activeAudio) {
-            activeAudio.volume = settings.newUiAudioVolume;
-        }
+        if (activeAudio) activeAudio.volume = settings.newUiAudioVolume;
     }, [activeAudio, settings.newUiAudioVolume]);
 
-    // Song name and jacket in browser/OS media controls. The low-res art is enough at thumbnail size.
     const jacketUrl = selectedSong
         ? hasPerDifficultyIllustrations(selectedSong.id)
             ? getDifficultyIllustrationUrl(settings.proxySource, selectedSong.id, 'AT')
@@ -275,16 +252,12 @@ const App: React.FC = () => {
         : null;
     useMediaSession(activeAudio, selectedSong, jacketUrl);
 
-    // Stop audio when the audio element is replaced or the app unmounts
     useEffect(() => {
-        return () => {
-            if (activeAudio) activeAudio.pause();
-        };
+        return () => { if (activeAudio) activeAudio.pause(); };
     }, [activeAudio]);
 
     const executeAllAssetsExport = async () => {
         if (!selectedSong || files.length === 0 || exportState.type) return;
-
         setExportState({ type: 'phira', progress: 0 });
         try {
             const fileName = await exportAllAssets(files, selectedSong, settings, (progress) => {
@@ -305,7 +278,6 @@ const App: React.FC = () => {
 
     const executeChartExport = async () => {
         if (!selectedSong || !selectedDifficulty || exportState.type) return;
-
         setExportState({ type: 'chart', progress: 0 });
         try {
             const fileName = await exportChart(files, selectedSong, selectedDifficulty, settings, (progress) => {
@@ -329,28 +301,22 @@ const App: React.FC = () => {
         executeAllAssetsExport();
     };
 
-    // Patched chart → known-issue warning → export.
     const proceedChartExport = () => {
         if (!selectedSong || !selectedDifficulty) return;
-
         const patched = getPatchedChart(selectedSong.id, selectedDifficulty);
         if (patched) {
             setPatchedChartPrompt(patched);
             return;
         }
-
         startChartExport();
     };
 
     const handleExportChart = () => {
         if (!selectedSong || !selectedDifficulty || exportState.type) return;
-
-        // The "Before you play" notice is shown once, before the first export.
         if (!localStorage.getItem(INSTRUCTION_SHOWN_KEY)) {
             setShowInstruction(true);
             return;
         }
-
         proceedChartExport();
     };
 
@@ -363,11 +329,8 @@ const App: React.FC = () => {
     const startChartExport = () => {
         if (!selectedSong || !selectedDifficulty) return;
         const entry = isBlacklisted(selectedSong.id, selectedDifficulty);
-        if (entry) {
-            setBlacklistWarning({ ...entry, exportType: 'chart' });
-        } else {
-            executeChartExport();
-        }
+        if (entry) setBlacklistWarning({ ...entry, exportType: 'chart' });
+        else executeChartExport();
     };
 
     const handlePatchedOriginal = () => {
@@ -458,40 +421,31 @@ const App: React.FC = () => {
         }
     }, []);
 
-    // Cancel bulk export when exiting bulk download mode
     useEffect(() => {
-        if (!settings.bulkDownloadMode) {
-            cancelBulkExport();
-        }
+        if (!settings.bulkDownloadMode) cancelBulkExport();
     }, [settings.bulkDownloadMode, cancelBulkExport]);
 
     const handleBlacklistConfirm = () => {
         if (!blacklistWarning) return;
-
-        if (blacklistWarning.exportType === 'chart') {
-            executeChartExport();
-        }
+        if (blacklistWarning.exportType === 'chart') executeChartExport();
         setBlacklistWarning(null);
     };
 
-    const handleBlacklistCancel = () => {
-        setBlacklistWarning(null);
-    };
-
+    const handleBlacklistCancel = () => setBlacklistWarning(null);
     const handleFileDownloaded = useCallback((fileName: string) => showToast(`Saved ${fileName}`), [showToast]);
 
-    const bulkInputClass = 'w-full h-10 rounded-[10px] bg-white border border-[#dce3dd] px-3 font-mono text-sm text-[#16201a] placeholder:text-[#8b9a91] focus:outline-none focus:border-[#008c3c] disabled:opacity-50';
+    const bulkInputClass = 'w-full h-10 rounded-xl bg-[#f8faf8] border border-[#d7e0d9] px-3 font-mono text-sm text-[#16201a] placeholder:text-[#8b9a91] focus:outline-none focus:border-[#008c3c] disabled:opacity-50';
 
     const renderBulkPanel = () => (
-        <div className="h-full overflow-y-auto thin-scroll flex items-center justify-center p-5 sm:p-10 bg-[#f3f5f3]">
-            <div className="w-full max-w-lg flex flex-col gap-5 p-6 rounded-2xl bg-white border border-[#dce3dd] shadow-sm">
+        <div className="h-full overflow-y-auto thin-scroll jr-station-bg flex items-center justify-center p-5 sm:p-10">
+            <div className="w-full max-w-lg flex flex-col gap-5 p-7 rounded-2xl bg-white border border-[#d7e0d9] shadow-[0_6px_24px_rgba(18,28,22,0.06)]">
                 <div className="flex flex-col gap-1">
                     <span className="flex items-center gap-2 font-mono text-[11px] font-semibold tracking-[.12em] text-[#b45309]">
-                        BULK DOWNLOAD MODE
+                        BULK DISPATCH MODE
                         <span className="text-[9px] font-semibold tracking-[.1em] px-1.5 py-0.5 rounded bg-[#fef3c7]">WIP</span>
                     </span>
-                    <h2 className="text-[32px] font-bold leading-[1.15] text-[#16201a]">Export every song</h2>
-                    <p className="text-sm text-[#4b5c53]">To return to the normal page, turn off “Bulk download mode” in Settings → Advanced.</p>
+                    <h2 className="text-[30px] font-bold leading-[1.15] text-[#16201a]">Export every track</h2>
+                    <p className="text-sm text-[#4b5c53]">To return to the normal terminal, turn off “Bulk download mode” in Settings → Advanced.</p>
                 </div>
 
                 <div className="grid sm:grid-cols-2 gap-4">
@@ -530,7 +484,7 @@ const App: React.FC = () => {
                         type="button"
                         onClick={handleBulkExport}
                         disabled={bulkExportState.isExporting || songs.length === 0}
-                        className="relative overflow-hidden flex-1 h-[52px] rounded-[10px] bg-[#008c3c] hover:bg-[#007331] text-white flex items-center justify-center gap-2.5 font-bold text-[15px] tracking-[.04em] transition-colors disabled:cursor-not-allowed disabled:bg-[#008c3c]/40"
+                        className="relative overflow-hidden flex-1 h-[52px] rounded-xl bg-[#008c3c] hover:bg-[#007331] text-white flex items-center justify-center gap-2.5 font-bold text-[15px] tracking-[.04em] transition-colors disabled:cursor-not-allowed disabled:bg-[#008c3c]/40"
                     >
                         {bulkExportState.isExporting ? (
                             <>
@@ -548,12 +502,12 @@ const App: React.FC = () => {
                         )}
                     </button>
                     {bulkExportState.isExporting && (
-                        <Button variant="danger" className="h-[52px] px-5 rounded-[10px]" onClick={cancelBulkExport}>Cancel</Button>
+                        <Button variant="danger" className="h-[52px] px-5 rounded-xl" onClick={cancelBulkExport}>Cancel</Button>
                     )}
                 </div>
 
                 {bulkExportState.isExporting && (
-                    <div className="flex flex-col gap-2 p-4 rounded-xl border border-[#dce3dd] bg-[#f8faf8]">
+                    <div className="flex flex-col gap-2 p-4 rounded-xl border border-[#d7e0d9] bg-[#f8faf8]">
                         <div className="flex justify-between text-sm">
                             <span className="text-[#4b5c53]">Action: <span className="text-[#008c3c] font-semibold">{bulkExportState.action}</span></span>
                             <span className="font-mono text-xs text-[#73857b]">{bulkExportState.songsLeft} LEFT</span>
@@ -568,7 +522,7 @@ const App: React.FC = () => {
     );
 
     return (
-        <div className="relative h-dvh flex flex-col antialiased font-saira text-[#16201a] bg-[#f3f5f3] overflow-hidden">
+        <div className="relative h-dvh flex flex-col antialiased font-saira text-[#16201a] bg-[#f4f6f4] overflow-hidden">
             {isSettingsOpen && <SettingsPopup isOpen={isSettingsOpen} onClose={() => setIsSettingsOpen(false)} initialCategory={settingsCategory} />}
             {isFaqOpen && <FAQPopup isOpen={isFaqOpen} onClose={() => setIsFaqOpen(false)} />}
             {isAboutOpen && <AboutPopup isOpen={isAboutOpen} onClose={() => setIsAboutOpen(false)} />}
@@ -642,7 +596,7 @@ const App: React.FC = () => {
                 />
 
                 <main className="flex-1 min-h-0 grid grid-rows-[minmax(0,40%)_minmax(0,1fr)] md:grid-rows-1 md:grid-cols-[340px_minmax(0,1fr)]">
-                    <aside className="min-h-0 border-b md:border-b-0 md:border-r border-[#dce3dd]">
+                    <aside className="min-h-0 border-b md:border-b-0 md:border-r border-[#d7e0d9]">
                         <SongSelector
                             isLoading={isLoadingSongs}
                             error={errorSongs}
@@ -677,7 +631,7 @@ const App: React.FC = () => {
                             <div
                                 key={toast.id}
                                 role="status"
-                                className="motion-toast absolute left-1/2 bottom-5 z-30 flex items-center gap-2.5 max-w-[calc(100%-32px)] pl-3 pr-4 py-2.5 rounded-[10px] bg-white border border-[#008c3c]/35 shadow-[0_12px_32px_rgba(22,32,26,0.14)] text-[13px] text-[#16201a]"
+                                className="motion-toast absolute left-1/2 bottom-5 z-30 flex items-center gap-2.5 max-w-[calc(100%-32px)] pl-3 pr-4 py-2.5 rounded-xl bg-white border border-[#008c3c]/35 shadow-[0_12px_32px_rgba(18,28,22,0.14)] text-[13px] text-[#16201a]"
                             >
                                 <span className="w-5 h-5 flex-none rounded-full bg-[#008c3c] flex items-center justify-center">
                                     <svg width="12" height="12" fill="none" viewBox="0 0 24 24" strokeWidth={3} stroke="#ffffff"><path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" /></svg>
@@ -688,9 +642,9 @@ const App: React.FC = () => {
                     </section>
                 </main>
 
-                <footer className="flex-none min-h-10 flex flex-wrap items-center justify-center text-center gap-x-6 gap-y-0.5 px-4 sm:px-6 py-2 border-t border-[#dce3dd] bg-white text-xs text-[#4b5c53]">
+                <footer className="flex-none min-h-10 flex flex-wrap items-center justify-center text-center gap-x-6 gap-y-0.5 px-4 sm:px-6 py-2 border-t border-[#d7e0d9] bg-white text-xs text-[#4b5c53]">
                     <span>Developed by <b className="text-[#16201a]">JackZhang</b></span>
-                    <span>Source code on <a href={REPO_URL} target="_blank" rel="noreferrer" className="text-[#008c3c] font-medium hover:underline">GitHub</a></span>
+                    <span>Source code on <a href={REPO_URL} target="_blank" rel="noreferrer" className="text-[#008c3c] font-semibold hover:underline">GitHub</a></span>
                     <span className="hidden sm:inline text-[#73857b]">All assets belong to their respective copyright holders.</span>
                 </footer>
             </div>
